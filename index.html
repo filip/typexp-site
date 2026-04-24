@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typexp — Text Expander for macOS</title>
+<meta name="description" content="Typexp is a lightweight macOS menu bar text expander. Create short triggers that expand into full text, emails, code snippets and more — instantly, in any app.">
+<meta name="keywords" content="text expander, mac text expander, macOS text expander, snippet manager, keyboard shortcuts, text shortcuts, productivity app, menu bar app, iCloud sync, text automation, typing shortcuts, abbreviation expander">
+<meta name="author" content="creativeapplications.net">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="http://typexp.app">
+<meta property="og:title" content="Typexp — Text Expander for macOS">
+<meta property="og:description" content="Type less. Say more. Typexp lives in your menu bar and expands short abbreviations into full text — instantly, in any app.">
+<meta property="og:image" content="http://typexp.app/images/Typexp_og.jpg">
+<meta property="og:image:width" content="1440">
+<meta property="og:image:height" content="900">
+<meta property="og:url" content="http://typexp.app">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://typexp.app/images/Typexp_og.jpg">
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --surface: rgba(255,255,255,0.72);
+    --surface-border: rgba(0,0,0,0.08);
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --text-tertiary: #aeaeb2;
+    --accent: #0071e3;
+    --accent-hover: #0077ed;
+    --hero-bg: url('images/wallpaper-light.jpeg');
+    --hero-overlay: rgba(245,245,247,0.15);
+    --hero-text: #1d1d1f;
+    --hero-sub: rgba(29,29,31,0.72);
+    --card-bg: rgba(255,255,255,0.65);
+    --card-border: rgba(255,255,255,0.9);
+    --section-bg: #f5f5f7;
+    --section-alt: #ffffff;
+    --feature-icon-bg: rgba(0,113,227,0.1);
+    --toggle-bg: rgba(0,0,0,0.08);
+    --toggle-thumb: #ffffff;
+    --shadow-card: 0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08);
+    --shadow-screenshot: 0 32px 80px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.1);
+    --nav-bg: rgba(245,245,247,0.85);
+    --nav-border: rgba(0,0,0,0.08);
+    --pill-bg: rgba(0,113,227,0.08);
+    --pill-text: #0071e3;
+  }
+
+  [data-theme="dark"] {
+    --bg: #000000;
+    --surface: rgba(28,28,30,0.72);
+    --surface-border: rgba(255,255,255,0.08);
+    --text-primary: #f5f5f7;
+    --text-secondary: #a1a1a6;
+    --text-tertiary: #636366;
+    --accent: #2997ff;
+    --accent-hover: #409cff;
+    --hero-bg: url('images/wallpaper-dark.jpeg');
+    --hero-overlay: rgba(0,0,0,0.08);
+    --hero-text: #f5f5f7;
+    --hero-sub: rgba(245,245,247,0.72);
+    --card-bg: rgba(44,44,46,0.65);
+    --card-border: rgba(255,255,255,0.08);
+    --section-bg: #000000;
+    --section-alt: #0a0a0a;
+    --feature-icon-bg: rgba(41,151,255,0.15);
+    --toggle-bg: rgba(255,255,255,0.12);
+    --toggle-thumb: #ffffff;
+    --shadow-card: 0 20px 60px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+    --shadow-screenshot: 0 32px 80px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.4);
+    --nav-bg: rgba(0,0,0,0.72);
+    --nav-border: rgba(255,255,255,0.08);
+    --pill-bg: rgba(41,151,255,0.12);
+    --pill-text: #2997ff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 52px;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--nav-border);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    transition: background 0.4s, border-color 0.4s;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    text-decoration: none;
+  }
+
+  .app-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6.5px;
+    border: none;
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.18);
+    flex-shrink: 0;
+    display: block;
+  }
+
+  [data-theme="dark"] .app-icon {
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18);
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .nav-link {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover { color: var(--text-primary); }
+
+  /* Theme toggle */
+  .theme-toggle {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    background: var(--toggle-bg);
+    border-radius: 13px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--toggle-thumb);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  [data-theme="dark"] .theme-toggle::after {
+    transform: translateX(18px);
+  }
+
+  .theme-toggle-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .icon-sun { left: 6px; opacity: 1; }
+  .icon-moon { right: 5px; opacity: 0.5; }
+
+  [data-theme="dark"] .icon-sun { opacity: 0.5; }
+  [data-theme="dark"] .icon-moon { opacity: 1; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100svh;
+    background-image: var(--hero-bg);
+    background-size: cover;
+    background-position: center top;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+    transition: background-image 0s;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--hero-overlay);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--pill-text);
+    background: var(--pill-bg);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    letter-spacing: 0.2px;
+    backdrop-filter: blur(10px);
+  }
+
+  .hero-title {
+    font-size: clamp(52px, 8vw, 88px);
+    font-weight: 700;
+    letter-spacing: -2.5px;
+    line-height: 1.0;
+    color: var(--hero-text);
+    margin-bottom: 20px;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(18px, 2.5vw, 22px);
+    font-weight: 400;
+    color: var(--hero-sub);
+    letter-spacing: -0.3px;
+    line-height: 1.5;
+    max-width: 520px;
+    margin: 0 auto 40px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .badge-link {
+    display: block;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .badge-link:hover { transform: scale(1.04); opacity: 0.9; }
+
+  .badge-link img {
+    height: 53px;
+    width: auto;
+  }
+
+  .hero-note {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--hero-sub);
+    opacity: 0.7;
+  }
+
+  .hero-screenshot {
+    position: relative;
+    z-index: 1;
+    margin-top: 64px;
+    max-width: 860px;
+    width: 100%;
+  }
+
+  .hero-screenshot img {
+    width: 100%;
+    display: block;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 100px 24px;
+    transition: background 0.4s;
+  }
+
+  section.alt { background: var(--section-alt); }
+
+  .section-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: clamp(32px, 4.5vw, 52px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+
+  .section-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 560px;
+    letter-spacing: -0.2px;
+  }
+
+  /* ── FEATURES GRID ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 56px;
+  }
+
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(20px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.4s;
+    box-shadow: var(--shadow-card);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 28px 70px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.1);
+  }
+
+  [data-theme="dark"] .feature-card:hover {
+    box-shadow: 0 28px 70px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .feature-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--feature-icon-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .feature-title {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .feature-body {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* ── SCREENSHOTS ── */
+  .screenshots-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .screenshots-grid .shot-wide {
+    grid-column: span 2;
+  }
+
+  .shot {
+    transition: transform 0.3s ease;
+  }
+
+  .shot:hover {
+    transform: scale(1.015) translateY(-4px);
+  }
+
+  .shot img {
+    display: block;
+    width: 100%;
+  }
+
+  .shot-caption {
+    padding: 10px 0 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+    margin-top: 56px;
+    counter-reset: steps;
+  }
+
+  .step {
+    counter-increment: steps;
+    position: relative;
+  }
+
+  .step-number {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .step-title {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .step-body {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  .step-code {
+    display: inline-block;
+    font-family: "SF Mono", "Fira Mono", "Menlo", monospace;
+    font-size: 14px;
+    background: var(--pill-bg);
+    color: var(--pill-text);
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+
+  /* ── VARIABLES CALLOUT ── */
+  .callout {
+    margin-top: 56px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 48px 52px;
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-card);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 52px;
+    align-items: center;
+    transition: background 0.4s;
+  }
+
+  .callout-text {}
+
+  .callout-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+  }
+
+  .callout-body {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .callout-image img {
+    width: 100%;
+    display: block;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--nav-border);
+    padding: 48px 32px;
+    background: var(--section-alt);
+    transition: background 0.4s, border-color 0.4s;
+  }
+
+  .footer-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-brand {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  .footer-meta {
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+
+  .footer-badge .badge-link img { height: 36px; }
+
+  /* ── MENUBAR DEMO ── */
+  .demo-section {
+    background: var(--section-alt);
+    padding: 80px 24px 100px;
+    text-align: center;
+  }
+
+  .mac-desktop {
+    position: relative;
+    max-width: 860px;
+    margin: 56px auto 0;
+    border-radius: 14px;
+    overflow: visible;
+  }
+
+  .mac-menubar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 28px;
+    padding: 0 12px 0 16px;
+    border-radius: 10px;
+    background: var(--menubar-bg);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 24px rgba(0,0,0,0.18);
+    border: 1px solid var(--menubar-border);
+    user-select: none;
+  }
+
+  :root {
+    --menubar-bg: rgba(236,236,240,0.88);
+    --menubar-border: rgba(0,0,0,0.1);
+    --menubar-text: rgba(0,0,0,0.75);
+    --menubar-active-bg: rgba(0,0,0,0.08);
+    --mac-menu-bg: rgba(240,240,244,0.92);
+    --mac-menu-border: rgba(0,0,0,0.14);
+    --mac-menu-shadow: 0 8px 40px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
+    --mac-menu-text: #1d1d1f;
+    --mac-menu-sub: #8e8e93;
+    --mac-menu-separator: rgba(0,0,0,0.1);
+    --mac-menu-hover: rgba(0,0,0,0.07);
+  }
+
+  [data-theme="dark"] {
+    --menubar-bg: rgba(32,32,36,0.88);
+    --menubar-border: rgba(255,255,255,0.08);
+    --menubar-text: rgba(255,255,255,0.8);
+    --menubar-active-bg: rgba(255,255,255,0.1);
+    --mac-menu-bg: rgba(38,38,42,0.96);
+    --mac-menu-border: rgba(255,255,255,0.1);
+    --mac-menu-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
+    --mac-menu-text: #f5f5f7;
+    --mac-menu-sub: #8e8e93;
+    --mac-menu-separator: rgba(255,255,255,0.1);
+    --mac-menu-hover: rgba(255,255,255,0.08);
+  }
+
+  .mac-menubar-left {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .mac-menu-item {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--menubar-text);
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: default;
+  }
+
+  .mac-menu-item.apple {
+    font-size: 15px;
+    padding: 1px 7px;
+    font-weight: 400;
+  }
+
+  .mac-menubar-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mac-status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 22px;
+    border-radius: 5px;
+    color: var(--menubar-text);
+    font-size: 12px;
+    cursor: default;
+    opacity: 0.7;
+  }
+
+  .typexp-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 22px;
+    border-radius: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    transition: background 0.15s;
+    color: var(--menubar-text);
+  }
+
+  .typexp-icon-btn:hover,
+  .typexp-icon-btn.active {
+    background: var(--menubar-active-bg);
+  }
+
+  .typexp-icon-btn svg {
+    display: block;
+  }
+
+  /* Dropdown menu */
+  .mac-dropdown {
+    position: absolute;
+    top: calc(100% + 2px);
+    right: 0;
+    width: 230px;
+    background: var(--mac-menu-bg);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border-radius: 10px;
+    border: 1px solid var(--mac-menu-border);
+    box-shadow: var(--mac-menu-shadow);
+    padding: 6px 0;
+    z-index: 200;
+    pointer-events: auto;
+
+    opacity: 0;
+    transform: scale(0.95) translateY(-6px);
+    transform-origin: top right;
+    transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .mac-dropdown.open {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  .mac-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 14px;
+    cursor: default;
+    border-radius: 5px;
+    margin: 0 4px;
+    min-height: 34px;
+  }
+
+  .mac-dropdown-item:hover {
+    background: var(--mac-menu-hover);
+  }
+
+  .mac-dropdown-item-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    align-items: flex-start;
+  }
+
+  .mac-dropdown-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--mac-menu-text);
+    line-height: 1.3;
+  }
+
+  .mac-dropdown-sub {
+    font-size: 11px;
+    color: var(--mac-menu-sub);
+    font-family: "SF Mono", "Menlo", monospace;
+    line-height: 1.3;
+  }
+
+  .mac-dropdown-shortcut {
+    font-size: 12px;
+    color: var(--mac-menu-sub);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .mac-dropdown-separator {
+    height: 1px;
+    background: var(--mac-menu-separator);
+    margin: 4px 0;
+  }
+
+  .mac-dropdown-item-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .fade-up-1 { animation-delay: 0.1s; }
+  .fade-up-2 { animation-delay: 0.2s; }
+  .fade-up-3 { animation-delay: 0.35s; }
+  .fade-up-4 { animation-delay: 0.5s; }
+  .fade-up-5 { animation-delay: 0.65s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 760px) {
+    nav { padding: 0 20px; }
+
+    .screenshots-grid { grid-template-columns: 1fr; }
+    .screenshots-grid .shot-wide { grid-column: span 1; }
+
+    .callout {
+      grid-template-columns: 1fr;
+      padding: 32px 28px;
+      gap: 32px;
+    }
+
+    .callout-image { order: -1; }
+
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="images/icon.png" alt="Typexp icon" class="app-icon">
+    Typexp
+  </a>
+  <div class="nav-right">
+    <a href="#features" class="nav-link">Features</a>
+<a href="#how-it-works" class="nav-link">How it works</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <span class="theme-toggle-icon icon-sun">☀️</span>
+      <span class="theme-toggle-icon icon-moon">🌙</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow fade-up fade-up-1">
+      ✦ macOS text expander
+    </div>
+    <h1 class="hero-title fade-up fade-up-2">Type less.<br>Say more.</h1>
+    <p class="hero-subtitle fade-up fade-up-3">
+      Typexp lives in your menu bar and expands short abbreviations into full text — instantly, in any app.
+    </p>
+    <div class="hero-actions fade-up fade-up-4">
+      <a href="#" class="badge-link" id="heroAppStoreBadge">
+        <img src="images/appstore-badge-black.svg" alt="Download on the App Store" id="badgeImg">
+      </a>
+    </div>
+    <p class="hero-note fade-up fade-up-5">Requires macOS 14 Sonoma or later</p>
+  </div>
+  <div class="hero-screenshot fade-up fade-up-5" style="position:relative;">
+    <img id="heroScreenshot" src="images/screenshot-editor-light.png" alt="Typexp main window">
+    <img id="variableOverlay"
+         src="images/screenshot-variables-light.png"
+         alt="Fill In Variables panel"
+         style="position:absolute; width:36%; right:calc(4% - 100px); bottom:22%; user-select:none; -webkit-user-drag:none; filter:drop-shadow(0 12px 32px rgba(0,0,0,0.28)); opacity:0.8;">
+  </div>
+</section>
+
+<!-- MENUBAR DEMO -->
+<section class="demo-section alt" id="demo">
+  <div class="section-inner">
+    <p class="section-eyebrow">Always there</p>
+    <h2 class="section-title">Lives in your menu bar.</h2>
+    <p class="section-subtitle" style="margin: 0 auto;">One click to see your recent snippets, toggle expansion, or open settings.</p>
+
+    <div class="mac-desktop">
+      <div class="mac-menubar">
+        <!-- Left: Apple + app menus -->
+        <div class="mac-menubar-left">
+          <span class="mac-menu-item apple"></span>
+          <span class="mac-menu-item" style="font-weight:600;">Finder</span>
+          <span class="mac-menu-item">File</span>
+          <span class="mac-menu-item">Edit</span>
+          <span class="mac-menu-item">View</span>
+          <span class="mac-menu-item">Go</span>
+          <span class="mac-menu-item">Window</span>
+        </div>
+
+        <!-- Right: system icons + Typexp -->
+        <div class="mac-menubar-right">
+          <span class="mac-status-icon">
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><rect x="0.5" y="0.5" width="12" height="8" rx="1.5" stroke="currentColor" stroke-opacity="0.8"/><rect x="1" y="1" width="9" height="7" rx="1" fill="currentColor" fill-opacity="0.75"/><path d="M13 3.5V6.5C13.8284 6.22386 14 5.61395 14 5C14 4.38605 13.8284 3.77614 13 3.5Z" fill="currentColor" fill-opacity="0.5"/></svg>
+          </span>
+          <span class="mac-status-icon">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" fill-opacity="0.75"><path d="M8 2C10.4 2 12.6 3 14.1 4.7L15.5 3.3C13.6 1.2 11 0 8 0C5 0 2.4 1.2 0.5 3.3L1.9 4.7C3.4 3 5.6 2 8 2Z"/><path d="M8 5C9.7 5 11.2 5.7 12.3 6.8L13.7 5.4C12.2 3.9 10.2 3 8 3C5.8 3 3.8 3.9 2.3 5.4L3.7 6.8C4.8 5.7 6.3 5 8 5Z"/><circle cx="8" cy="10" r="2"/></svg>
+          </span>
+          <span class="mac-status-icon" style="font-size:11px; font-weight:500; width:auto; padding:0 4px; opacity:0.75; font-variant-numeric:tabular-nums;" id="mbClock">9:41</span>
+
+          <!-- Typexp icon button -->
+          <button class="typexp-icon-btn" id="typexpBtn" aria-label="Open Typexp menu" onclick="toggleTypexpMenu(event)" style="width:34px;">
+            <svg width="24" height="14" viewBox="0 0 32 18" fill="none">
+              <!-- "A" — 20% smaller, vertically centred -->
+              <path d="M6.1 14.0 L10.5 4.1 L14.9 14.0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+              <path d="M7.5 10.2 H13.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" opacity="0.85"/>
+              <!-- I-beam cursor — same height -->
+              <rect x="22.25" y="2" width="1.5" height="14" rx="0.75" fill="currentColor" opacity="0.85"/>
+              <rect x="19" y="2" width="8" height="1.4" rx="0.7" fill="currentColor" opacity="0.85"/>
+              <rect x="19" y="14.6" width="8" height="1.4" rx="0.7" fill="currentColor" opacity="0.85"/>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div class="mac-dropdown" id="typexpMenu">
+            <div class="mac-dropdown-item">
+              <div class="mac-dropdown-item-left">
+                <span class="mac-dropdown-title">Poject Enquiry</span>
+                <span class="mac-dropdown-sub">projectreply</span>
+              </div>
+            </div>
+            <div class="mac-dropdown-item">
+              <div class="mac-dropdown-item-left">
+                <span class="mac-dropdown-title">Work Signature</span>
+                <span class="mac-dropdown-sub">sigwork</span>
+              </div>
+            </div>
+            <div class="mac-dropdown-item">
+              <div class="mac-dropdown-item-left">
+                <span class="mac-dropdown-title">Failed Registration</span>
+                <span class="mac-dropdown-sub">failedreg</span>
+              </div>
+            </div>
+            <div class="mac-dropdown-item">
+              <div class="mac-dropdown-item-left">
+                <span class="mac-dropdown-title">Private Signature</span>
+                <span class="mac-dropdown-sub">sigpriv</span>
+              </div>
+            </div>
+            <div class="mac-dropdown-item">
+              <div class="mac-dropdown-item-left">
+                <span class="mac-dropdown-title">Advertising Enquiry</span>
+                <span class="mac-dropdown-sub">adreply</span>
+              </div>
+            </div>
+            <div class="mac-dropdown-separator"></div>
+            <div class="mac-dropdown-item">
+              <div class="mac-dropdown-item-left">
+                <span class="mac-dropdown-title">Settings</span>
+              </div>
+            </div>
+            <div class="mac-dropdown-separator"></div>
+            <div class="mac-dropdown-item">
+              <div class="mac-dropdown-item-left" style="flex-direction:row; align-items:center;">
+                <svg class="mac-dropdown-item-icon" viewBox="0 0 16 16" fill="none">
+                  <rect x="1" y="1" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.5"/>
+                  <path d="M5 8H11M8 5L11 8L8 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.7"/>
+                </svg>
+                <span class="mac-dropdown-title">Quit Typexp</span>
+              </div>
+              <span class="mac-dropdown-shortcut">⌘Q</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <p class="section-eyebrow">Features</p>
+    <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
+    <p class="section-subtitle">A focused, lightweight tool that stays out of your way until you need it.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">Instant expansion</h3>
+        <p class="feature-body">Type your trigger shortcut and press Space or Return. Typexp replaces it with the full text in milliseconds, in any app.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3 class="feature-title">Fill-in variables</h3>
+        <p class="feature-body">Use <code style="font-family:monospace;font-size:13px;background:var(--pill-bg);color:var(--pill-text);padding:1px 5px;border-radius:4px;">{{variable}}</code> placeholders in your snippets. A sleek panel pops up asking you to fill in the blanks before inserting.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">☁️</div>
+        <h3 class="feature-title">iCloud sync</h3>
+        <p class="feature-body">Enable iCloud sync and your snippets appear on every Mac you own — automatically, with no manual export or import.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">Sandboxed &amp; private</h3>
+        <p class="feature-body">Fully App Store sandboxed. Your snippets never leave your Mac unless you turn on iCloud. No analytics, no tracking.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">💾</div>
+        <h3 class="feature-title">Automatic backups</h3>
+        <p class="feature-body">Weekly backups to Application Support keep a rolling history of your snippets. Restore any version at any time.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3 class="feature-title">Liquid Glass design</h3>
+        <p class="feature-body">Beautiful macOS 26 Tahoe glass aesthetics throughout, with graceful fallbacks for macOS Sonoma and Sequoia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<section id="screenshots" class="alt">
+  <div class="section-inner" style="text-align:center;">
+    <p class="section-eyebrow">Backup &amp; Sync</p>
+    <h2 class="section-title">Your snippets,<br>everywhere.</h2>
+    <p class="section-subtitle" style="margin: 0 auto 48px;">Enable iCloud Drive sync and your snippets appear on every Mac you own. Automatic weekly backups keep a rolling history so you can always recover.</p>
+    <div class="shot">
+      <img id="syncScreenshot" src="images/screenshot-sync-light.png" alt="Typexp — iCloud sync and backups settings">
+    </div>
+  </div>
+</section>
+
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="alt">
+  <div class="section-inner">
+    <p class="section-eyebrow">How it works</p>
+    <h2 class="section-title">Up and running in minutes.</h2>
+    <p class="section-subtitle">Three steps and you're expanding text everywhere on your Mac.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">01</div>
+        <h3 class="step-title">Install &amp; permit</h3>
+        <p class="step-body">Download from the App Store and grant Accessibility permission in System Settings. Typexp will guide you through it.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">02</div>
+        <h3 class="step-title">Create a snippet</h3>
+        <p class="step-body">Click the menu bar icon, open Settings, and add a new snippet. Give it a short trigger like</p>
+        <span class="step-code">sigwork</span>
+      </div>
+      <div class="step">
+        <div class="step-number">03</div>
+        <h3 class="step-title">Type &amp; expand</h3>
+        <p class="step-body">In any app, type your trigger and press Space or Return. Watch it expand instantly into the full text you defined.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">04</div>
+        <h3 class="step-title">Add variables</h3>
+        <p class="step-body">Wrap words in <span class="step-code">{{curly braces}}</span> to turn them into fill-in fields. Perfect for templates, emails, and code.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="text-align:center; background: var(--section-bg);">
+  <div class="section-inner" style="display:flex; flex-direction:column; align-items:center;">
+    <p class="section-eyebrow">Get Typexp</p>
+    <h2 class="section-title" style="max-width:480px;">Your keyboard<br>just got smarter.</h2>
+    <p class="section-subtitle" style="margin-bottom:40px;">Available now on the Mac App Store.</p>
+    <a href="#" class="badge-link" id="ctaBadge">
+      <img src="images/appstore-badge-black.svg" alt="Download on the App Store" id="ctaBadgeImg" style="height:62px;">
+    </a>
+    <p style="margin-top:16px; font-size:13px; color:var(--text-tertiary);">Requires macOS 14 Sonoma or later · Sandboxed · No subscription</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand" style="display:flex; align-items:center; gap:10px;">
+        <img src="images/icon.png" alt="Typexp icon" class="app-icon" style="width:36px; height:36px; border-radius:8px;">
+        Typexp
+      </div>
+      <div class="footer-meta" style="margin-top:10px;">© 2026 Creative Applications Network</div>
+    </div>
+    <a href="mailto:info@creativeapplications.net?subject=Typexp%20Support" style="font-size:13px; color:var(--text-tertiary); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-tertiary)'">Contact Support</a>
+  </div>
+</footer>
+
+<script>
+  const html = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  const heroScreenshot = document.getElementById('heroScreenshot');
+  const badgeImg = document.getElementById('badgeImg');
+  const ctaBadgeImg = document.getElementById('ctaBadgeImg');
+
+  const darkBadge = 'images/appstore-badge-white.svg';
+  const lightBadge = 'images/appstore-badge-black.svg';
+  const darkShot = 'images/screenshot-editor-dark.png';
+  const lightShot = 'images/screenshot-editor-light.png';
+  const variableOverlay = document.getElementById('variableOverlay');
+  const darkOverlay = 'images/screenshot-variables-dark.png';
+  const lightOverlay = 'images/screenshot-variables-dark.png';
+  const syncScreenshot = document.getElementById('syncScreenshot');
+  const darkSync = 'images/screenshot-sync-dark.png';
+  const lightSync = 'images/screenshot-sync-light.png';
+
+  function applyTheme(dark) {
+    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    const badge = dark ? darkBadge : lightBadge;
+    badgeImg.src = badge;
+    ctaBadgeImg.src = badge;
+    heroScreenshot.src = dark ? darkShot : lightShot;
+    variableOverlay.src = dark ? darkOverlay : lightOverlay;
+    variableOverlay.style.filter = dark
+      ? 'none'
+      : 'invert(1) drop-shadow(0 6px 14px rgba(0,0,0,0.18))';
+    syncScreenshot.src = dark ? darkSync : lightSync;
+  }
+
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  let dark = mq.matches;
+  applyTheme(dark);
+
+  toggle.addEventListener('click', () => {
+    dark = !dark;
+    applyTheme(dark);
+  });
+
+  mq.addEventListener('change', e => {
+    dark = e.matches;
+    applyTheme(dark);
+  });
+
+  // Draggable elements
+  function makeDraggable(el) {
+    let dragging = false, startX, startY, baseX = 0, baseY = 0, currentX = 0, currentY = 0;
+
+    el.style.cursor = 'grab';
+    el.style.willChange = 'transform';
+
+    function onStart(clientX, clientY) {
+      dragging = true;
+      startX = clientX;
+      startY = clientY;
+      baseX = currentX;
+      baseY = currentY;
+      el.style.cursor = 'grabbing';
+    }
+
+    function onMove(clientX, clientY) {
+      if (!dragging) return;
+      currentX = baseX + (clientX - startX);
+      currentY = baseY + (clientY - startY);
+      el.style.transform = `translate(${currentX}px, ${currentY}px)`;
+    }
+
+    function onEnd() {
+      dragging = false;
+      el.style.cursor = 'grab';
+    }
+
+    el.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup', onEnd);
+
+    el.addEventListener('touchstart', e => { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, { passive: true });
+    window.addEventListener('touchmove', e => { if (!dragging) return; e.preventDefault(); const t = e.touches[0]; onMove(t.clientX, t.clientY); }, { passive: false });
+    window.addEventListener('touchend', onEnd);
+  }
+
+  makeDraggable(document.getElementById('heroScreenshot'));
+  makeDraggable(document.getElementById('variableOverlay'));
+
+  // Menu bar clock
+  function updateClock() {
+    const el = document.getElementById('mbClock');
+    if (!el) return;
+    const now = new Date();
+    const h = now.getHours() % 12 || 12;
+    const m = String(now.getMinutes()).padStart(2, '0');
+    el.textContent = h + ':' + m;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  // Typexp menu toggle
+  function toggleTypexpMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('typexpMenu');
+    const btn = document.getElementById('typexpBtn');
+    const isOpen = menu.classList.contains('open');
+    menu.classList.toggle('open', !isOpen);
+    btn.classList.toggle('active', !isOpen);
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('typexpMenu').classList.remove('open');
+    document.getElementById('typexpBtn').classList.remove('active');
+  });
+
+  // Scroll-triggered fade-in for non-hero elements
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.feature-card, .shot, .step, .callout').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(28px)';
+    el.style.transition = 'opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1)';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
