@@ -271,7 +271,7 @@
   .badge-link:hover { transform: scale(1.04); opacity: 0.9; }
 
   .badge-link img {
-    height: 53px;
+    height: 77px;
     width: auto;
   }
 
@@ -534,7 +534,7 @@
     color: var(--text-tertiary);
   }
 
-  .footer-badge .badge-link img { height: 36px; }
+  .footer-badge .badge-link img { height: 77px; }
 
   /* ── MENUBAR DEMO ── */
   .demo-section {
@@ -1025,7 +1025,7 @@
     <h2 class="section-title" style="max-width:480px;">Your keyboard<br>just got smarter.</h2>
     <p class="section-subtitle" style="margin-bottom:40px;">Available now on the Mac App Store.</p>
     <a href="#" class="badge-link" id="ctaBadge">
-      <img src="images/appstore-badge-black.svg" alt="Download on the App Store" id="ctaBadgeImg" style="height:62px;">
+      <img src="images/appstore-badge-black.svg" alt="Download on the App Store" id="ctaBadgeImg" style="height:77px;">
     </a>
     <p style="margin-top:16px; font-size:13px; color:var(--text-tertiary);">Requires macOS 14 Sonoma or later · Sandboxed · No subscription</p>
   </div>
@@ -1068,9 +1068,8 @@
 
   function applyTheme(dark) {
     html.setAttribute('data-theme', dark ? 'dark' : 'light');
-    const badge = dark ? darkBadge : lightBadge;
-    badgeImg.src = badge;
-    ctaBadgeImg.src = badge;
+    badgeImg.src = lightBadge;
+    ctaBadgeImg.src = lightBadge;
     heroScreenshot.src = dark ? darkShot : lightShot;
     variableOverlay.src = dark ? darkOverlay : lightOverlay;
     variableOverlay.style.filter = dark
