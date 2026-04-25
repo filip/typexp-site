@@ -1206,7 +1206,7 @@
 
   // ── Banner animation (p5.js instance mode) ────────────────────
   new p5(function(p) {
-    const W = 800, H = 560, MARGIN = 60, FSZ = 34, LH = 76;
+    const W = 800, H = 560, MARGIN = 60, FSZ = 34, LH = 56;
     const MAX_W = W - 2 * MARGIN;
 
     const EXAMPLES = [
@@ -1236,7 +1236,11 @@
       { context:'Starting a new API route...', trigger:'get', expansion:'app.get(\'/route\', async (req, res) => {\n  try {\n    res.json({ ok: true });\n  } catch (e) {\n    res.status(500).json({ error: e.message });\n  }\n});' },
       { context:'Writing a CSS reset block...', trigger:'reset', expansion:'*, *::before, *::after {\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n}' },
       { context:'Pasting code into the chat...', trigger:'review', expansion:'Review this code for bugs,\nperformance issues,\nand readability:' },
-      { context:'Starting a new AI chat...', trigger:'trans', vars:[{name:'language',value:'Spanish'}], expansion:'Translate the following\nto Spanish, keeping\nthe original tone:' }
+      { context:'Starting a new AI chat...', trigger:'trans', vars:[{name:'language',value:'Spanish'}], expansion:'Translate the following\nto Spanish, keeping\nthe original tone:' },
+      { context:'Setting an out-of-office reply...', trigger:'ooo', expansion:'Thanks for your message.\nI\'m out of the office\nuntil Monday 12 May.\nFor urgent matters please\ncontact team@studio.co' },
+      { context:'Following up on a proposal...', trigger:'fu', expansion:'Just following up on\nmy previous message.\nHappy to answer questions\nor jump on a quick call\nanytime this week.' },
+      { context:'Responding to a bug report...', trigger:'bugack', expansion:'Thanks for reporting this.\nWe\'ve reproduced the issue\nand it\'s now on our list.\nWe\'ll keep you updated\nas we work on a fix.' },
+      { context:'Wrapping up a project pitch...', trigger:'prop', expansion:'We\'d love to work with\nyou on this. Our estimate\nis 6–8 weeks from kickoff.\nLet\'s set up a call to\ndiscuss the next steps.' }
     ];
 
     const S = { WAIT:0, TYPING:1, HIGHLIGHT:2, DELETING:3, PANEL_IN:4, FILL_VAR:5, PANEL_CLICK:6, PANEL_OUT:7, EXPANDING:8, HOLD:9, FADEOUT:10 };
