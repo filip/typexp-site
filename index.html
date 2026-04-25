@@ -1235,7 +1235,9 @@
       { context:'Debugging in the console...', trigger:'cl', expansion:'console.log(\'[debug]\', );' },
       { context:'Adding a Python function...', trigger:'pyf', vars:[{name:'name',value:'process_data'},{name:'param',value:'items'}], expansion:'def process_data(items):\n    """Docstring."""\n    pass' },
       { context:'Starting a new API route...', trigger:'get', expansion:'app.get(\'/route\', async (req, res) => {\n  try {\n    res.json({ ok: true });\n  } catch (e) {\n    res.status(500).json({ error: e.message });\n  }\n});' },
-      { context:'Writing a CSS reset block...', trigger:'reset', expansion:'*, *::before, *::after {\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n}' }
+      { context:'Writing a CSS reset block...', trigger:'reset', expansion:'*, *::before, *::after {\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n}' },
+      { context:'Pasting code into the chat...', trigger:'review', expansion:'Review this code for bugs,\nperformance issues,\nand readability:' },
+      { context:'Starting a new AI chat...', trigger:'trans', vars:[{name:'language',value:'Spanish'}], expansion:'Translate the following\nto Spanish, keeping\nthe original tone:' }
     ];
 
     const S = { WAIT:0, TYPING:1, HIGHLIGHT:2, DELETING:3, PANEL_IN:4, FILL_VAR:5, PANEL_CLICK:6, PANEL_OUT:7, EXPANDING:8, HOLD:9, FADEOUT:10 };
