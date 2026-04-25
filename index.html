@@ -422,7 +422,7 @@
   /* ── HOW IT WORKS ── */
   .steps {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 32px;
     margin-top: 56px;
     counter-reset: steps;
@@ -780,6 +780,17 @@
     .mac-menubar-left .mac-menu-item:not(.apple) { display: none; }
     .mac-dropdown { width: 200px; right: 0; }
   }
+
+  /* ── BANNER ANIMATION ── */
+  .banner-section { text-align: center; }
+  #banner-container {
+    width: min(520px, 100%);
+    margin: 48px auto 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.13);
+  }
+  #banner-container canvas { display: block; }
 </style>
 </head>
 <body>
@@ -815,7 +826,8 @@
         <img src="images/appstore-badge-black.svg" alt="Download on the App Store" id="badgeImg">
       </a>
     </div>
-    <p class="hero-note fade-up fade-up-5">Requires macOS 14 Sonoma or later</p>
+    <p class="hero-note fade-up fade-up-5">$4.99 · One-time purchase · No subscription</p>
+    <p class="hero-note fade-up fade-up-5" style="margin-top:4px;">Requires macOS 14 Sonoma or later</p>
   </div>
   <div class="hero-screenshot fade-up fade-up-5" style="position:relative;">
     <img id="heroScreenshot" src="images/screenshot-editor-light.png" alt="Typexp main window">
@@ -823,6 +835,15 @@
          src="images/screenshot-variables-light.png"
          alt="Fill In Variables panel"
          style="position:absolute; width:36%; right:calc(4% - 100px); bottom:22%; user-select:none; -webkit-user-drag:none; filter:drop-shadow(0 12px 32px rgba(0,0,0,0.28)); opacity:0.8;">
+  </div>
+</section>
+
+<!-- BANNER ANIMATION -->
+<section class="banner-section" id="banner">
+  <div class="section-inner">
+    <p class="section-eyebrow">Works everywhere you type</p>
+    <h2 class="section-title">See it in action.</h2>
+    <div id="banner-container"></div>
   </div>
 </section>
 
@@ -936,7 +957,7 @@
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
         <h3 class="feature-title">Instant expansion</h3>
-        <p class="feature-body">Type your trigger shortcut and press Space or Return. Typexp replaces it with the full text in milliseconds, in any app.</p>
+        <p class="feature-body">Type your trigger and press Space or Return. Typexp replaces it in milliseconds — emails, replies, code snippets, anything you type repeatedly.</p>
       </div>
 
       <div class="feature-card">
@@ -990,7 +1011,7 @@
   <div class="section-inner">
     <p class="section-eyebrow">How it works</p>
     <h2 class="section-title">Up and running in minutes.</h2>
-    <p class="section-subtitle">Three steps and you're expanding text everywhere on your Mac.</p>
+    <p class="section-subtitle">Five steps and you're expanding text everywhere on your Mac.</p>
 
     <div class="steps">
       <div class="step">
@@ -1001,8 +1022,7 @@
       <div class="step">
         <div class="step-number">02</div>
         <h3 class="step-title">Create a snippet</h3>
-        <p class="step-body">Click the menu bar icon, open Settings, and add a new snippet. Give it a short trigger like</p>
-        <span class="step-code">sigwork</span>
+        <p class="step-body">Click the menu bar icon, open Settings, and add a snippet. A short trigger like <span class="step-code">sigwork</span> for your email sign-off, or <span class="step-code">rfc</span> for a React component stub.</p>
       </div>
       <div class="step">
         <div class="step-number">03</div>
@@ -1013,6 +1033,11 @@
         <div class="step-number">04</div>
         <h3 class="step-title">Add variables</h3>
         <p class="step-body">Wrap words in <span class="step-code">{{curly braces}}</span> to turn them into fill-in fields. Perfect for templates, emails, and code.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">05</div>
+        <h3 class="step-title">Make it yours</h3>
+        <p class="step-body">Your tone. Your phrases. The way you actually write — saved and ready.</p>
       </div>
     </div>
   </div>
@@ -1027,7 +1052,8 @@
     <a href="#" class="badge-link" id="ctaBadge">
       <img src="images/appstore-badge-black.svg" alt="Download on the App Store" id="ctaBadgeImg" style="height:77px;">
     </a>
-    <p style="margin-top:16px; font-size:13px; color:var(--text-tertiary);">Requires macOS 14 Sonoma or later · Sandboxed · No subscription</p>
+    <p style="margin-top:16px; font-size:15px; font-weight:500; color:var(--text-secondary);">$4.99 · One-time purchase · No subscription</p>
+    <p style="margin-top:8px; font-size:13px; color:var(--text-tertiary);">Requires macOS 14 Sonoma or later · Sandboxed</p>
   </div>
 </section>
 
@@ -1048,6 +1074,7 @@
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 <script>
   const html = document.documentElement;
   const toggle = document.getElementById('themeToggle');
@@ -1076,6 +1103,7 @@
       ? 'none'
       : 'invert(1) drop-shadow(0 6px 14px rgba(0,0,0,0.18))';
     syncScreenshot.src = dark ? darkSync : lightSync;
+    if (window.typexpBanner) window.typexpBanner.setDark(dark);
   }
 
   const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -1176,6 +1204,237 @@
     el.style.transition = 'opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1)';
     observer.observe(el);
   });
+
+  // ── Banner animation (p5.js instance mode) ────────────────────
+  new p5(function(p) {
+    const W = 800, H = 560, MARGIN = 60, FSZ = 34, LH = 76;
+    const MAX_W = W - 2 * MARGIN;
+
+    const EXAMPLES = [
+      { context:'Hi Sarah,\n\nWrapping up the proposal.', trigger:'ty', expansion:'Thank you — your feedback\nhas been really valuable.' },
+      { context:'取引先へのメール返信...', trigger:'jp', expansion:'お世話になっております。\nご連絡ありがとうございます。\n早急に対応いたします。' },
+      { context:'Please send the invoice to:', trigger:'addr', expansion:'Studio Eleven\n14 Canal Street\nAmsterdam, NL 1012 AN' },
+      { context:'给客户写邮件...', trigger:'zh', expansion:'您好，\n感谢您的来信。\n我会尽快与您联系。' },
+      { context:'Reaching out to a new contact...', trigger:'intro', vars:[{name:'name',value:'Alex'},{name:'company',value:'Acme Studio'}], expansion:'Hi Alex,\n\nReaching out from\nAcme Studio — let\'s connect!' },
+      { context:'Répondre à un client...', trigger:'fr', expansion:'Merci pour votre message.\nJe vous réponds\ndès que possible.' },
+      { context:'Respondiendo a un cliente...', trigger:'es', expansion:'Muchas gracias por\nsu mensaje. Le responderé\na la brevedad posible.' },
+      { context:'Signing off the email...', trigger:'sig', expansion:'Best,\nJamie Rivera\nProduct Designer\njamie@studio.co' },
+      { context:'E-Mail an einen Kunden...', trigger:'de', expansion:'Vielen Dank für\nIhre Nachricht.\nIch melde mich bald.' },
+      { context:'Scrivendo a un cliente...', trigger:'it', expansion:'Grazie mille per\nil suo messaggio.\nLa contatterò presto.' },
+      { context:'Respondendo a um cliente...', trigger:'pt', expansion:'Muito obrigado pela\nsua mensagem. Entrarei\nem contacto em breve.' },
+      { context:'고객에게 이메일 작성...', trigger:'kr', expansion:'안녕하세요,\n메시지 감사합니다.\n빠른 시일 내에\n연락드리겠습니다.' },
+      { context:'Письмо клиенту...', trigger:'ru', expansion:'Добрый день,\nспасибо за письмо.\nОтвечу в ближайшее время.' },
+      { context:'E-mail aan een klant...', trigger:'nl', expansion:'Hartelijk dank voor\nuw bericht. Ik neem\nzo snel mogelijk contact op.' },
+      { context:'Svarar på ett mejl...', trigger:'sv', expansion:'Tack för meddelandet.\nJag återkommer\nså snart som möjligt.' },
+      { context:'Setting up a meeting...', trigger:'meet', vars:[{name:'day',value:'Tuesday'},{name:'time',value:'3pm'}], expansion:'Let\'s catch up on\nTuesday at 3pm —\nlooking forward to it!' },
+      { context:'取引先への挨拶メール...', trigger:'jpv', vars:[{name:'お名前',value:'田中'},{name:'会社名',value:'山田商事'}], expansion:'田中様、\nお世話になっております。\n山田商事との取引を\n楽しみにしております。' },
+      { context:'给客户发送确认邮件...', trigger:'zhv', vars:[{name:'姓名',value:'李明'},{name:'公司',value:'上海科技'}], expansion:'尊敬的李明，\n感谢上海科技\n的长期支持与合作。' },
+      { context:'Confirmer un rendez-vous...', trigger:'rdv', vars:[{name:'nom',value:'Marie'},{name:'date',value:'mardi 5 mai'}], expansion:'Bonjour Marie,\nVotre rendez-vous du\nmardi 5 mai est confirmé.' },
+      { context:'Confirmar una reserva...', trigger:'rsv', vars:[{name:'nombre',value:'Carlos'},{name:'ciudad',value:'Barcelona'}], expansion:'Estimado Carlos,\nConfirmamos su reserva\nen Barcelona.' },
+      { context:'Writing a new component...', trigger:'rfc', expansion:'import React from \'react\';\n\nconst Component = () => {\n  return <div></div>;\n};\n\nexport default Component;' },
+      { context:'Debugging in the console...', trigger:'cl', expansion:'console.log(\'[debug]\', );' },
+      { context:'Adding a Python function...', trigger:'pyf', vars:[{name:'name',value:'process_data'},{name:'param',value:'items'}], expansion:'def process_data(items):\n    """Docstring."""\n    pass' },
+      { context:'Starting a new API route...', trigger:'get', expansion:'app.get(\'/route\', async (req, res) => {\n  try {\n    res.json({ ok: true });\n  } catch (e) {\n    res.status(500).json({ error: e.message });\n  }\n});' },
+      { context:'Writing a CSS reset block...', trigger:'reset', expansion:'*, *::before, *::after {\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n}' }
+    ];
+
+    const S = { WAIT:0, TYPING:1, HIGHLIGHT:2, DELETING:3, PANEL_IN:4, FILL_VAR:5, PANEL_CLICK:6, PANEL_OUT:7, EXPANDING:8, HOLD:9, FADEOUT:10 };
+
+    let state, exIdx, tyN, exN, delN, tick, fadeA, isDark, cycle;
+    let nextTypeAt, varIdx, varCharN, panelA, nextVarTypeAt;
+    let ctxLines = [], expLines = [];
+
+    function wrapLines(str, maxW) {
+      let out = [];
+      str.split('\n').forEach(para => {
+        if (para === '' || p.textWidth(para) <= maxW) { out.push(para); return; }
+        let words = para.split(' '), line = '';
+        words.forEach(word => {
+          let c = line ? line + ' ' + word : word;
+          if (p.textWidth(c) <= maxW) { line = c; }
+          else { if (line) out.push(line); line = word; }
+        });
+        if (line !== '') out.push(line);
+      });
+      return out;
+    }
+
+    function resetExample() {
+      state = S.WAIT; tyN = 0; exN = 0; delN = 0; tick = 0; fadeA = 0;
+      varIdx = 0; varCharN = 0; panelA = 0; ctxLines = []; expLines = [];
+      nextTypeAt = p.floor(p.random(7, 11));
+    }
+
+    function palette() {
+      return isDark
+        ? { bg:p.color(12,12,12), fg:p.color(230,230,230), dim:p.color(82,82,82), cur:p.color(160,160,160), sel:p.color(55,110,230,90), foot:p.color(52,52,52), panelBg:p.color(36,36,36), panelBorder:p.color(70,70,70), fieldBg:p.color(22,22,22), fieldBorder:p.color(60,60,60), label:p.color(140,140,140), btnBg:p.color(55,55,55), btnFg:p.color(190,190,190), btnActiveBg:p.color(50,120,255), btnActiveFg:p.color(255,255,255) }
+        : { bg:p.color(253,253,253), fg:p.color(20,20,20), dim:p.color(185,185,185), cur:p.color(85,85,85), sel:p.color(80,130,255,65), foot:p.color(205,205,205), panelBg:p.color(244,244,244), panelBorder:p.color(210,210,210), fieldBg:p.color(255,255,255), fieldBorder:p.color(210,210,210), label:p.color(130,130,130), btnBg:p.color(224,224,224), btnFg:p.color(55,55,55), btnActiveBg:p.color(50,120,255), btnActiveFg:p.color(255,255,255) };
+    }
+
+    function drawPanel(ex, pal) {
+      let vars = ex.vars, pW = p.min(560, MAX_W), rowH = 124;
+      let pH = 100 + vars.length * rowH + 104;
+      let pX = W/2 - pW/2, pY = H/2 - pH/2 + 30;
+      p.drawingContext.globalAlpha = panelA / 255;
+      p.drawingContext.shadowColor = isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.18)';
+      p.drawingContext.shadowBlur = 56; p.drawingContext.shadowOffsetY = 16;
+      p.fill(pal.panelBg); p.stroke(pal.panelBorder); p.strokeWeight(1); p.rect(pX, pY, pW, pH, 26); p.noStroke();
+      p.drawingContext.shadowBlur = 0; p.drawingContext.shadowOffsetY = 0;
+      p.textFont('monospace'); p.textSize(22); p.textAlign(p.LEFT, p.TOP); p.fill(pal.label);
+      p.text('FILL IN VARIABLES', pX+36, pY+34);
+      vars.forEach((v, i) => {
+        let ry = pY + 100 + i * rowH;
+        let fX = pX+36+168, fY = ry, fW = pW-72-168, fH = 68;
+        p.textSize(24); p.textAlign(p.LEFT, p.CENTER); p.fill(pal.label);
+        p.text(v.name, pX+36, ry+34);
+        p.fill(pal.fieldBg); p.stroke(pal.fieldBorder); p.strokeWeight(1); p.rect(fX, fY, fW, fH, 12); p.noStroke();
+        let typed = i < varIdx ? v.value : i === varIdx ? v.value.substring(0, varCharN) : '';
+        p.textSize(26); p.textAlign(p.LEFT, p.CENTER); p.fill(pal.fg); p.text(typed, fX+20, fY+fH/2);
+        if (i === varIdx && state === S.FILL_VAR) {
+          p.stroke(pal.cur); p.strokeWeight(3);
+          let tx = fX+20+p.textWidth(typed)+2;
+          p.line(tx, fY+14, tx, fY+fH-14); p.noStroke();
+        }
+      });
+      let btnW = 152, btnH = 60, btnX = pX+pW-36-btnW, btnY = pY+pH-88;
+      p.fill(state === S.PANEL_CLICK ? pal.btnActiveBg : pal.btnBg); p.noStroke(); p.rect(btnX, btnY, btnW, btnH, 12);
+      p.textSize(24); p.textAlign(p.CENTER, p.CENTER);
+      p.fill(state === S.PANEL_CLICK ? pal.btnActiveFg : pal.btnFg);
+      p.text('Insert', btnX+btnW/2, btnY+btnH/2);
+      p.drawingContext.globalAlpha = 1.0;
+    }
+
+    p.setup = function() {
+      let cont = document.getElementById('banner-container');
+      let s = Math.min(cont.offsetWidth, 680);
+      p.createCanvas(s, Math.round(s * H / W));
+      p.frameRate(60);
+      isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      exIdx = 0; cycle = 0;
+      resetExample();
+      window.typexpBanner = { setDark: function(d) { isDark = d; } };
+    };
+
+    p.windowResized = function() {
+      let cont = document.getElementById('banner-container');
+      let s = Math.min(cont.offsetWidth, 680);
+      p.resizeCanvas(s, Math.round(s * H / W));
+    };
+
+    p.draw = function() {
+      let sc = p.width / W;
+      let ex = EXAMPLES[exIdx], trig = ex.trigger, exp = ex.expansion;
+      let pal = palette();
+
+      p.background(pal.bg);
+      p.scale(sc);
+
+      p.fill(pal.bg); p.noStroke(); p.rect(0, 0, W, H);
+      p.textFont('monospace'); p.textSize(FSZ);
+
+      if (ctxLines.length === 0) {
+        ctxLines = wrapLines(ex.context, MAX_W);
+        expLines = wrapLines(ex.expansion, MAX_W);
+      }
+
+      let topY = 60, typeY = topY + ctxLines.length * LH + LH * 0.65;
+
+      p.textAlign(p.LEFT, p.TOP); p.noStroke(); p.fill(pal.dim);
+      ctxLines.forEach((line, i) => p.text(line, MARGIN, topY + i * LH));
+
+      let showTrig = '', showExp = '', doHL = false;
+      switch (state) {
+        case S.TYPING:    showTrig = trig.substring(0, tyN); break;
+        case S.HIGHLIGHT: showTrig = trig; doHL = true; break;
+        case S.DELETING:  showTrig = trig.substring(0, trig.length - delN); break;
+        case S.EXPANDING:
+        case S.HOLD:      showExp = exp.substring(0, exN); break;
+      }
+
+      if (doHL && showTrig) {
+        let tw = p.textWidth(showTrig);
+        p.fill(pal.sel); p.noStroke(); p.rect(MARGIN-6, typeY-4, tw+12, FSZ+14, 8);
+      }
+      p.fill(pal.fg); p.noStroke();
+      if (showTrig) p.text(showTrig, MARGIN, typeY);
+
+      let expDisplayLines = [];
+      if (showExp) {
+        expDisplayLines = wrapLines(showExp, MAX_W);
+        p.fill(pal.fg); p.noStroke();
+        expDisplayLines.forEach((line, i) => p.text(line, MARGIN, typeY + i * LH));
+      }
+
+      let panelActive = state >= S.PANEL_IN && state <= S.PANEL_OUT;
+      if (state !== S.HOLD && state !== S.FADEOUT && !panelActive) {
+        let cx = MARGIN, cy = typeY;
+        if (showTrig) { cx = MARGIN + p.textWidth(showTrig); }
+        else if (expDisplayLines.length > 0) {
+          let last = expDisplayLines[expDisplayLines.length - 1];
+          cy = typeY + (expDisplayLines.length - 1) * LH;
+          cx = MARGIN + p.textWidth(last);
+        }
+        let busy = state === S.TYPING || state === S.EXPANDING || state === S.DELETING;
+        if (busy || (p.frameCount % 60 < 42)) {
+          p.stroke(pal.cur); p.strokeWeight(4);
+          p.line(cx+4, cy, cx+4, cy+FSZ+6); p.noStroke();
+        }
+      }
+
+      if (panelActive) drawPanel(ex, pal);
+
+
+      if (state === S.FADEOUT) {
+        p.noStroke(); p.fill(p.red(pal.bg), p.green(pal.bg), p.blue(pal.bg), fadeA);
+        p.rect(0, 0, W, H);
+      }
+
+      tick++;
+      switch (state) {
+        case S.WAIT:      if (tick > 55) { state = S.TYPING; tick = 0; } break;
+        case S.TYPING:
+          if (tick >= nextTypeAt) {
+            tyN = p.min(tyN+1, trig.length);
+            nextTypeAt = tick + p.floor(p.random(6, 14));
+            if (tyN >= trig.length) { state = S.HIGHLIGHT; tick = 0; }
+          } break;
+        case S.HIGHLIGHT: if (tick > 24) { state = S.DELETING; delN = 0; tick = 0; } break;
+        case S.DELETING:
+          delN = p.min(delN+1, trig.length);
+          if (delN >= trig.length) {
+            if (ex.vars) { state = S.PANEL_IN; panelA = 0; tick = 0; }
+            else         { state = S.EXPANDING; exN = 0; tick = 0; }
+          } break;
+        case S.PANEL_IN:
+          panelA = p.min(panelA+18, 255);
+          if (panelA >= 255) { state = S.FILL_VAR; varIdx = 0; varCharN = 0; nextVarTypeAt = tick+18; } break;
+        case S.FILL_VAR:
+          if (tick >= nextVarTypeAt) {
+            let cv = ex.vars[varIdx]; varCharN++;
+            nextVarTypeAt = tick + p.floor(p.random(5, 12));
+            if (varCharN >= cv.value.length) {
+              if (varIdx < ex.vars.length-1) { varIdx++; varCharN = 0; nextVarTypeAt = tick+22; }
+              else { state = S.PANEL_CLICK; tick = 0; }
+            }
+          } break;
+        case S.PANEL_CLICK: if (tick > 20) { state = S.PANEL_OUT; tick = 0; } break;
+        case S.PANEL_OUT:
+          panelA = p.max(panelA-22, 0);
+          if (panelA <= 0) { state = S.EXPANDING; exN = 0; tick = 0; } break;
+        case S.EXPANDING:
+          exN = p.min(exN+3, exp.length);
+          if (exN >= exp.length) { state = S.HOLD; tick = 0; } break;
+        case S.HOLD: if (tick > 130) { state = S.FADEOUT; fadeA = 0; tick = 0; } break;
+        case S.FADEOUT:
+          fadeA = p.min(fadeA+14, 255);
+          if (fadeA >= 255) {
+            let next; do { next = p.floor(p.random(EXAMPLES.length)); } while (next === exIdx);
+            exIdx = next;
+            resetExample();
+          } break;
+      }
+    };
+  }, 'banner-container');
 </script>
 </body>
 </html>
