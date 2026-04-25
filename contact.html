@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Support — Typexp</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  nav {
+    padding: 0 32px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    background: rgba(245,245,247,0.85);
+    backdrop-filter: blur(20px);
+  }
+
+  nav a {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1f;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  nav img {
+    width: 24px;
+    height: 24px;
+    border-radius: 5.5px;
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.18);
+  }
+
+  .content {
+    max-width: 560px;
+    margin: 64px auto;
+    padding: 0 24px 80px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: #6e6e73;
+    margin-bottom: 48px;
+    line-height: 1.5;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 8px;
+    letter-spacing: -0.1px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 15px;
+    color: #1d1d1f;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.14);
+    border-radius: 10px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #0071e3;
+    box-shadow: 0 0 0 3px rgba(0,113,227,0.15);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6e73' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.6;
+  }
+
+  button[type="submit"] {
+    display: inline-block;
+    background: #0071e3;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 980px;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 8px;
+  }
+
+  button[type="submit"]:hover { background: #0077ed; }
+  button[type="submit"]:active { transform: scale(0.97); }
+
+  .success {
+    display: none;
+    background: rgba(52,199,89,0.1);
+    border: 1px solid rgba(52,199,89,0.3);
+    border-radius: 12px;
+    padding: 20px 24px;
+    font-size: 15px;
+    color: #1d1d1f;
+    line-height: 1.5;
+    margin-top: 32px;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    margin: 48px 0 32px;
+  }
+
+  .alt-contact {
+    font-size: 13px;
+    color: #6e6e73;
+  }
+
+  .alt-contact a {
+    color: #0071e3;
+    text-decoration: none;
+  }
+
+  .alt-contact a:hover { text-decoration: underline; }
+
+  .faq { margin-top: 64px; }
+
+  .faq h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    margin-bottom: 32px;
+  }
+
+  .faq-item {
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding: 20px 0;
+  }
+
+  .faq-item:last-child { border-bottom: 1px solid rgba(0,0,0,0.08); }
+
+  .faq-q {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 8px;
+  }
+
+  .faq-a {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #3a3a3c;
+    margin: 0;
+  }
+
+  .faq-a a { color: #0071e3; text-decoration: none; }
+  .faq-a a:hover { text-decoration: underline; }
+
+  .faq-a code {
+    font-family: monospace;
+    font-size: 13px;
+    background: rgba(0,0,0,0.06);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/">
+    <img src="images/icon.png" alt="Typexp">
+    Typexp
+  </a>
+</nav>
+
+<div class="content">
+  <h1>Contact Support</h1>
+  <p class="subtitle">Have a question or running into an issue? We'll get back to you as soon as possible.</p>
+
+  <form action="https://formspree.io/f/xwvaydrb" method="POST" id="contactForm">
+
+    <div class="form-group">
+      <label for="email">Your email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required>
+    </div>
+
+    <div class="form-group">
+      <label for="subject">Topic</label>
+      <select id="subject" name="subject">
+        <option value="Bug report">Bug report</option>
+        <option value="Feature request">Feature request</option>
+        <option value="Question">Question</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" placeholder="Describe the issue or question..." required></textarea>
+    </div>
+
+    <button type="submit">Send message</button>
+  </form>
+
+  <div class="success" id="successMsg">
+    ✓ Message sent — thanks for reaching out. We'll be in touch shortly.
+  </div>
+
+  <hr>
+  <p class="alt-contact">Prefer email? <a href="mailto:info@creativeapplications.net?subject=Typexp%20Support">info@creativeapplications.net</a></p>
+
+  <div class="faq">
+    <h2>Common questions</h2>
+
+    <div class="faq-item">
+      <p class="faq-q">Typexp isn't expanding anything. What's wrong?</p>
+      <p class="faq-a">Almost always an Accessibility permission issue. Open <strong>System Settings → Privacy &amp; Security → Accessibility</strong>, find Typexp in the list, and make sure the toggle is on. If it's already on, try toggling it off and back on — macOS sometimes loses the grant after an update. Then quit and relaunch Typexp.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">I granted Accessibility access but it still doesn't work.</p>
+      <p class="faq-a">If you moved or reinstalled the app after granting permission, macOS treats it as a different app and revokes access. Remove the existing entry from the Accessibility list, then add it again by relaunching Typexp — it will prompt you automatically. If not, drag the app into the list manually.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Does it work in every app?</p>
+      <p class="faq-a">It works in the vast majority of apps — Mail, Notes, Safari, Chrome, Slack, VS Code, Terminal, and more. A small number of apps with fully custom text engines (some games, certain Electron apps) may not support the standard macOS text injection API. In those cases Typexp falls back to a clipboard paste method, which works in most situations.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Is my data private? Does Typexp send anything online?</p>
+      <p class="faq-a">No data ever leaves your Mac. Typexp monitors keystrokes locally using the macOS Accessibility API — nothing is logged or transmitted. If you enable iCloud sync, your snippets are stored in your personal iCloud account only. See the full <a href="/privacy">Privacy Policy</a>.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">How do I back up or transfer my snippets?</p>
+      <p class="faq-a">Your snippets are stored at <code>~/Library/Application Support/TextExp/snippets.json</code>. You can copy this file to any Mac and place it in the same location. Typexp also supports automatic weekly backups — enable them in Settings. For seamless multi-Mac sync, turn on iCloud sync in Settings instead.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Which macOS versions are supported?</p>
+      <p class="faq-a">Typexp requires macOS 14 Sonoma or later. The full Liquid Glass design is available on macOS 26 Tahoe; earlier versions get a clean alternative appearance.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Why build another text expander?</p>
+      <p class="faq-a">We looked around and couldn't find one that was simple, native, and didn't ask for a monthly fee. Most options were either bloated with features we'd never use, required a subscription just to save a few snippets, or hadn't been updated in years. We wanted something that lived quietly in the menu bar, did exactly one thing well, and was yours to keep for a one-time price. So we built it.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('contactForm');
+  const success = document.getElementById('successMsg');
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const data = new FormData(form);
+    const res = await fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
+    if (res.ok) {
+      form.style.display = 'none';
+      success.style.display = 'block';
+    }
+  });
+</script>
+
+</body>
+</html>
