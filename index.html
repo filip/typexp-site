@@ -85,7 +85,7 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; background: var(--bg); }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
@@ -104,8 +104,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 32px;
-    height: 52px;
+    padding: env(safe-area-inset-top) 32px 0;
+    height: calc(52px + env(safe-area-inset-top));
     background: var(--nav-bg);
     border-bottom: 1px solid var(--nav-border);
     backdrop-filter: blur(20px) saturate(180%);
