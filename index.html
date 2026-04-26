@@ -1226,6 +1226,14 @@
   makeDraggable(document.getElementById('heroScreenshot'));
   makeDraggable(document.getElementById('variableOverlay'));
 
+  // Matomo App Store click tracking
+  ['heroAppStoreBadge', 'ctaBadge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => {
+      _paq.push(['trackEvent', 'AppStore', 'Click', id]);
+    });
+  });
+
   // Menu bar clock
   function updateClock() {
     const el = document.getElementById('mbClock');
