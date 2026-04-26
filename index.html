@@ -992,6 +992,24 @@
         <h3 class="feature-title">Liquid Glass design</h3>
         <p class="feature-body">Beautiful macOS 26 Tahoe glass aesthetics throughout, with graceful fallbacks for macOS Sonoma and Sequoia.</p>
       </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">✂️</div>
+        <h3 class="feature-title">Save from anywhere</h3>
+        <p class="feature-body">Select any text, right-click, and choose <em>Create Typexp Snippet</em> from the Services menu. Opens straight to a new snippet with the text already filled in.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🕐</div>
+        <h3 class="feature-title">Recent snippets</h3>
+        <p class="feature-body">Click the menu bar icon to see your 5 most recently used snippets. Click any to copy it instantly — or fill in variables if the snippet needs them.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3 class="feature-title">Any language</h3>
+        <p class="feature-body">Save snippets in any language — Japanese, Arabic, Chinese, emoji, or mixed scripts. Typexp stores and expands exactly what you type, no configuration needed.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -1151,9 +1169,36 @@
     window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
     window.addEventListener('mouseup', onEnd);
 
-    el.addEventListener('touchstart', e => { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, { passive: true });
-    window.addEventListener('touchmove', e => { if (!dragging) return; e.preventDefault(); const t = e.touches[0]; onMove(t.clientX, t.clientY); }, { passive: false });
-    window.addEventListener('touchend', onEnd);
+    let touchActive = false;
+
+    el.addEventListener('touchstart', e => {
+      if (!touchActive) {
+        touchActive = true;
+        el.style.outline = '2px solid var(--accent)';
+        el.style.outlineOffset = '3px';
+        return;
+      }
+      const t = e.touches[0];
+      onStart(t.clientX, t.clientY);
+    }, { passive: true });
+
+    window.addEventListener('touchmove', e => {
+      if (!dragging) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      onMove(t.clientX, t.clientY);
+    }, { passive: false });
+
+    window.addEventListener('touchend', e => {
+      if (dragging) { onEnd(); }
+    });
+
+    document.addEventListener('touchstart', e => {
+      if (touchActive && !el.contains(e.target)) {
+        touchActive = false;
+        el.style.outline = 'none';
+      }
+    }, { passive: true });
   }
 
   makeDraggable(document.getElementById('heroScreenshot'));
