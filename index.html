@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=0.85, maximum-scale=0.85">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f5f7" id="themeColorMeta">
 <title>Typexp — Text Expander for macOS</title>
 <meta name="description" content="Typexp is a lightweight macOS menu bar text expander. Create short triggers that expand into full text, emails, code snippets and more — instantly, in any app.">
 <meta name="keywords" content="text expander, mac text expander, macOS text expander, snippet manager, keyboard shortcuts, text shortcuts, productivity app, menu bar app, iCloud sync, text automation, typing shortcuts, abbreviation expander">
@@ -1112,6 +1115,7 @@
 
   function applyTheme(dark) {
     html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    document.getElementById('themeColorMeta').setAttribute('content', dark ? '#000000' : '#f5f5f7');
     badgeImg.src = lightBadge;
     ctaBadgeImg.src = lightBadge;
     heroScreenshot.src = dark ? darkShot : lightShot;
