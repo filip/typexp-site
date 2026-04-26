@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="can-theme" content="true">
+  <title>Typexp — Banner</title>
+  <style>
+    :root {
+      --backgroundcolor: #fdfdfd;
+      --bodycolor: #141414;
+      --midcolor: #7F7F7F;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #1a1a1a; }
+    body { display: flex; align-items: center; justify-content: center; }
+    canvas { display: block; cursor: pointer; }
+  </style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<script>
+const W = 800;
+const MARGIN = 60;
+const FSZ = 34;
+const LH  = 56;
+const MAX_W = W - 2 * MARGIN;
+
+const EXAMPLES = [
+  {
+    context:   'Hi Sarah,\n\nWrapping up the proposal.',
+    trigger:   'ty',
+    expansion: 'Thank you — your feedback\nhas been really valuable.'
+  },
+  {
+    context:   '取引先へのメール返信...',
+    trigger:   'jp',
+    expansion: 'お世話になっております。\nご連絡ありがとうございます。\n早急に対応いたします。'
+  },
+  {
+    context:   'Please send the invoice to:',
+    trigger:   'addr',
+    expansion: 'Studio Eleven\n14 Canal Street\nAmsterdam, NL 1012 AN'
+  },
+  {
+    context:   '给客户写邮件...',
+    trigger:   'zh',
+    expansion: '您好，\n感谢您的来信。\n我会尽快与您联系。'
+  },
+  {
+    context:   'Reaching out to a new contact...',
+    trigger:   'intro',
+    vars: [
+      { name: 'name',    value: 'Alex' },
+      { name: 'company', value: 'Acme Studio' }
+    ],
+    expansion: 'Hi Alex,\n\nReaching out from\nAcme Studio — let\'s connect!'
+  },
+  {
+    context:   '取引先への挨拶メール...',
+    trigger:   'jpv',
+    vars: [
+      { name: 'お名前', value: '田中' },
+      { name: '会社名', value: '山田商事' }
+    ],
+    expansion: '田中様、\nお世話になっております。\n山田商事との取引を\n楽しみにしております。'
+  },
+  {
+    context:   '给客户发送确认邮件...',
+    trigger:   'zhv',
+    vars: [
+      { name: '姓名', value: '李明' },
+      { name: '公司', value: '上海科技' }
+    ],
+    expansion: '尊敬的李明，\n感谢上海科技\n的长期支持与合作。'
+  },
+  {
+    context:   'Confirmer un rendez-vous...',
+    trigger:   'rdv',
+    vars: [
+      { name: 'nom',  value: 'Marie' },
+      { name: 'date', value: 'mardi 5 mai' }
+    ],
+    expansion: 'Bonjour Marie,\nVotre rendez-vous du\nmardi 5 mai est confirmé.'
+  },
+  {
+    context:   'Confirmar una reserva...',
+    trigger:   'rsv',
+    vars: [
+      { name: 'nombre', value: 'Carlos' },
+      { name: 'ciudad', value: 'Barcelona' }
+    ],
+    expansion: 'Estimado Carlos,\nConfirmamos su reserva\nen Barcelona.'
+  },
+  {
+    context:   'Répondre à un client...',
+    trigger:   'fr',
+    expansion: 'Merci pour votre message.\nJe vous réponds\ndès que possible.'
+  },
+  {
+    context:   'Respondiendo a un cliente...',
+    trigger:   'es',
+    expansion: 'Muchas gracias por\nsu mensaje. Le responderé\na la brevedad posible.'
+  },
+  {
+    context:   'Signing off the email...',
+    trigger:   'sig',
+    expansion: 'Best,\nJamie Rivera\nProduct Designer\njamie@studio.co'
+  },
+  {
+    context:   'E-Mail an einen Kunden...',
+    trigger:   'de',
+    expansion: 'Vielen Dank für\nIhre Nachricht.\nIch melde mich bald.'
+  },
+  {
+    context:   'Scrivendo a un cliente...',
+    trigger:   'it',
+    expansion: 'Grazie mille per\nil suo messaggio.\nLa contatterò presto.'
+  },
+  {
+    context:   'Respondendo a um cliente...',
+    trigger:   'pt',
+    expansion: 'Muito obrigado pela\nsua mensagem. Entrarei\nem contacto em breve.'
+  },
+  {
+    context:   '고객에게 이메일 작성...',
+    trigger:   'kr',
+    expansion: '안녕하세요,\n메시지 감사합니다.\n빠른 시일 내에\n연락드리겠습니다.'
+  },
+  {
+    context:   'Письмо клиенту...',
+    trigger:   'ru',
+    expansion: 'Добрый день,\nспасибо за письмо.\nОтвечу в ближайшее время.'
+  },
+  {
+    context:   'E-mail aan een klant...',
+    trigger:   'nl',
+    expansion: 'Hartelijk dank voor\nuw bericht. Ik neem\nzo snel mogelijk contact op.'
+  },
+  {
+    context:   'Svarar på ett mejl...',
+    trigger:   'sv',
+    expansion: 'Tack för meddelandet.\nJag återkommer\nså snart som möjligt.'
+  },
+  {
+    context:   'Setting up a meeting...',
+    trigger:   'meet',
+    vars: [
+      { name: 'day',  value: 'Tuesday' },
+      { name: 'time', value: '3pm' }
+    ],
+    expansion: 'Let\'s catch up on\nTuesday at 3pm —\nlooking forward to it!'
+  },
+  {
+    context:   'Pasting code into the chat...',
+    trigger:   'review',
+    expansion: 'Review this code for bugs,\nperformance issues,\nand readability:'
+  },
+  {
+    context:   'Starting a new AI chat...',
+    trigger:   'trans',
+    vars: [
+      { name: 'language', value: 'Spanish' }
+    ],
+    expansion: 'Translate the following\nto Spanish, keeping\nthe original tone:'
+  },
+  {
+    context:   'Setting an out-of-office reply...',
+    trigger:   'ooo',
+    expansion: 'Thanks for your message.\nI\'m out of the office\nuntil Monday 12 May.\nFor urgent matters please\ncontact team@studio.co'
+  },
+  {
+    context:   'Following up on a proposal...',
+    trigger:   'fu',
+    expansion: 'Just following up on\nmy previous message.\nHappy to answer questions\nor jump on a quick call\nanytime this week.'
+  },
+  {
+    context:   'Responding to a bug report...',
+    trigger:   'bugack',
+    expansion: 'Thanks for reporting this.\nWe\'ve reproduced the issue\nand it\'s now on our list.\nWe\'ll keep you updated\nas we work on a fix.'
+  },
+  {
+    context:   'Wrapping up a project pitch...',
+    trigger:   'prop',
+    expansion: 'We\'d love to work with\nyou on this. Our estimate\nis 6–8 weeks from kickoff.\nLet\'s set up a call to\ndiscuss the next steps.'
+  },
+  {
+    context:   'Wondering what this is?',
+    trigger:   'typexp',
+    expansion: 'A macOS menu bar app that\nexpands short triggers into\nfull text — instantly, in\nany app. One-time purchase,\nno subscription.'
+  }
+];
+
+const S = {
+  WAIT: 0, TYPING: 1, HIGHLIGHT: 2, DELETING: 3,
+  PANEL_IN: 4, FILL_VAR: 5, PANEL_CLICK: 6, PANEL_OUT: 7,
+  EXPANDING: 8, HOLD: 9, FADEOUT: 10
+};
+
+let state, exIdx, tyN, exN, delN, tick, fadeA, isDark, cycle;
+let nextTypeAt, varIdx, varCharN, panelA, nextVarTypeAt;
+let ctxLines = [], expLines = [];
+
+// Word-wrap a string at maxW pixels. Preserves explicit \n breaks.
+function wrapLines(str, maxW) {
+  let out = [];
+  str.split('\n').forEach(para => {
+    if (para === '' || textWidth(para) <= maxW) {
+      out.push(para);
+    } else {
+      let words = para.split(' ');
+      let line  = '';
+      words.forEach(word => {
+        let candidate = line ? line + ' ' + word : word;
+        if (textWidth(candidate) <= maxW) {
+          line = candidate;
+        } else {
+          if (line) out.push(line);
+          // Single word wider than maxW — push it anyway rather than drop it
+          line = word;
+        }
+      });
+      if (line !== '') out.push(line);
+    }
+  });
+  return out;
+}
+
+function resetExample() {
+  state      = S.WAIT;
+  tyN        = 0; exN = 0; delN = 0; tick = 0; fadeA = 0;
+  varIdx     = 0; varCharN = 0; panelA = 0;
+  nextTypeAt = floor(random(7, 11));
+  ctxLines   = [];
+  expLines   = [];
+}
+
+function setup() {
+  let s = min(windowWidth, windowHeight);
+  createCanvas(s, s);
+  frameRate(60);
+  exIdx = 0; isDark = false; cycle = 0;
+  resetExample();
+}
+
+function windowResized() {
+  let s = min(windowWidth, windowHeight);
+  resizeCanvas(s, s);
+}
+function mousePressed()   { window.open('https://typexp.app', '_blank'); }
+
+function palette() {
+  const root = (window.parent !== window) ? window.parent.document.documentElement : document.documentElement;
+  const css  = getComputedStyle(root);
+  const bgV  = css.getPropertyValue('--backgroundcolor').trim() || '#fdfdfd';
+  const fgV  = css.getPropertyValue('--bodycolor').trim()       || '#141414';
+  const dimV = css.getPropertyValue('--midcolor').trim()        || '#7F7F7F';
+  const bg  = isDark ? color(fgV) : color(bgV);
+  const fg  = isDark ? color(bgV) : color(fgV);
+  const dim = color(dimV);
+  return isDark
+    ? { bg, fg, dim, cur: color(160,160,160),
+        sel: color(red(fg), green(fg), blue(fg), 60), foot: color(52,52,52),
+        panelBg: bg, panelBorder: dim,
+        fieldBg: bg, fieldBorder: dim,
+        label: dim, btnBg: dim,
+        btnFg: fg,  btnActiveBg: fg,
+        btnActiveFg: bg }
+    : { bg, fg, dim, cur: color(85,85,85),
+        sel: color(red(fg), green(fg), blue(fg), 60), foot: color(205,205,205),
+        panelBg: bg, panelBorder: dim,
+        fieldBg: bg, fieldBorder: dim,
+        label: dim, btnBg: dim,
+        btnFg: fg,  btnActiveBg: fg,
+        btnActiveFg: bg };
+}
+
+function drawPanel(ex, p) {
+  let vars = ex.vars;
+  let pW   = min(560, MAX_W);
+  let rowH = 124;
+  let pH   = 100 + vars.length * rowH + 104;
+  let pX   = W / 2 - pW / 2;
+  let pY   = W / 2 - pH / 2 + 60;
+
+  drawingContext.globalAlpha   = panelA / 255;
+  drawingContext.shadowColor   = isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.18)';
+  drawingContext.shadowBlur    = 56;
+  drawingContext.shadowOffsetY = 16;
+
+  fill(p.panelBg); stroke(p.panelBorder); strokeWeight(1);
+  rect(pX, pY, pW, pH, 26);
+  noStroke();
+  drawingContext.shadowBlur = drawingContext.shadowOffsetY = 0;
+
+  textFont('monospace'); textSize(22); textAlign(LEFT, TOP);
+  fill(p.label);
+  text('FILL IN VARIABLES', pX + 36, pY + 34);
+
+  vars.forEach((v, i) => {
+    let ry = pY + 100 + i * rowH;
+    let fX = pX + 36 + 168, fY = ry, fW = pW - 72 - 168, fH = 68;
+
+    textSize(24); textAlign(LEFT, CENTER); fill(p.label);
+    text(v.name, pX + 36, ry + 34);
+
+    fill(p.fieldBg); stroke(p.fieldBorder); strokeWeight(1);
+    rect(fX, fY, fW, fH, 12); noStroke();
+
+    let typed = (i < varIdx)   ? v.value :
+                (i === varIdx) ? v.value.substring(0, varCharN) : '';
+    textSize(26); textAlign(LEFT, CENTER); fill(p.fg);
+    text(typed, fX + 20, fY + fH / 2);
+
+    if (i === varIdx && state === S.FILL_VAR) {
+      stroke(p.cur); strokeWeight(3);
+      let tx = fX + 20 + textWidth(typed) + 2;
+      line(tx, fY + 14, tx, fY + fH - 14);
+      noStroke();
+    }
+  });
+
+  let btnW = 152, btnH = 60;
+  let btnX = pX + pW - 36 - btnW, btnY = pY + pH - 88;
+  let active = state === S.PANEL_CLICK;
+  fill(active ? p.btnActiveBg : p.btnBg); noStroke();
+  rect(btnX, btnY, btnW, btnH, 12);
+  textSize(24); textAlign(CENTER, CENTER);
+  fill(active ? p.btnActiveFg : p.btnFg);
+  text('Insert', btnX + btnW / 2, btnY + btnH / 2);
+
+  drawingContext.globalAlpha = 1.0;
+}
+
+function draw() {
+  let sc = min(width, height) / W;
+  background(isDark ? color(12,12,12) : color(253,253,253));
+  translate(width / 2 - W * sc / 2, height / 2 - W * sc / 2);
+  scale(sc);
+
+  let ex   = EXAMPLES[exIdx];
+  let trig = ex.trigger;
+  let exp  = ex.expansion;
+  let p    = palette();
+
+  fill(p.bg); noStroke(); rect(0, 0, W, W);
+
+  // Set font before wrapLines so textWidth is accurate
+  textFont('monospace'); textSize(FSZ);
+
+  // Precompute wrapped lines once per example
+  if (ctxLines.length === 0) {
+    ctxLines = wrapLines(ex.context,   MAX_W);
+    expLines = wrapLines(ex.expansion, MAX_W);
+  }
+
+  let topY  = 120;
+  let typeY = topY + ctxLines.length * LH + LH * 0.65;
+
+  // Context text
+  textAlign(LEFT, TOP); noStroke();
+  fill(p.dim);
+  ctxLines.forEach((line, i) => text(line, MARGIN, topY + i * LH));
+
+  // Compute display strings
+  let showTrig = '', showExp = '', doHL = false;
+  switch (state) {
+    case S.TYPING:    showTrig = trig.substring(0, tyN);                break;
+    case S.HIGHLIGHT: showTrig = trig; doHL = true;                     break;
+    case S.DELETING:  showTrig = trig.substring(0, trig.length - delN); break;
+    case S.EXPANDING:
+    case S.HOLD:      showExp  = exp.substring(0, exN);                 break;
+  }
+
+  // Trigger — always one short word, no wrap needed
+  if (doHL && showTrig) {
+    let tw = textWidth(showTrig);
+    fill(p.sel); noStroke();
+    rect(MARGIN - 6, typeY - 4, tw + 12, FSZ + 14, 8);
+  }
+  if (showTrig) { fill(p.fg); noStroke(); text(showTrig, MARGIN, typeY); }
+
+  // Expansion — wrap the partial string for correct layout
+  let expDisplayLines = [];
+  if (showExp) {
+    expDisplayLines = wrapLines(showExp, MAX_W);
+    fill(p.fg); noStroke();
+    expDisplayLines.forEach((line, i) => text(line, MARGIN, typeY + i * LH));
+  }
+
+  // Cursor
+  let panelActive = state >= S.PANEL_IN && state <= S.PANEL_OUT;
+  if (state !== S.HOLD && state !== S.FADEOUT && !panelActive) {
+    let cx = MARGIN, cy = typeY;
+    if (showTrig) {
+      cx = MARGIN + textWidth(showTrig);
+    } else if (expDisplayLines.length > 0) {
+      let last = expDisplayLines[expDisplayLines.length - 1];
+      cy = typeY + (expDisplayLines.length - 1) * LH;
+      cx = MARGIN + textWidth(last);
+    }
+    let busy    = state === S.TYPING || state === S.EXPANDING || state === S.DELETING;
+    let showCur = busy || (frameCount % 60 < 42);
+    if (showCur) {
+      stroke(p.cur); strokeWeight(4);
+      line(cx + 4, cy, cx + 4, cy + FSZ + 6);
+      noStroke();
+    }
+  }
+
+  // Panel
+  if (panelActive) drawPanel(ex, p);
+
+  // Header + footer
+  textFont('monospace'); noStroke(); fill(p.dim);
+  textSize(21); textAlign(LEFT, CENTER);
+  text('T Y P E X P', MARGIN, 60);
+
+  textSize(22);
+  textAlign(LEFT, BOTTOM);  text('typexp.app', MARGIN, W - 52);
+  textAlign(RIGHT, BOTTOM); text('Instant text expansion for macOS', W - MARGIN, W - 52);
+
+  // Fade overlay
+  if (state === S.FADEOUT) {
+    noStroke(); fill(red(p.bg), green(p.bg), blue(p.bg), fadeA);
+    rect(0, 0, W, W);
+  }
+
+  // ── State machine ──────────────────────────────────────────────
+  tick++;
+  switch (state) {
+    case S.WAIT:
+      if (tick > 55) { state = S.TYPING; tick = 0; } break;
+
+    case S.TYPING:
+      if (tick >= nextTypeAt) {
+        tyN = min(tyN + 1, trig.length);
+        nextTypeAt = tick + floor(random(6, 14));
+        if (tyN >= trig.length) { state = S.HIGHLIGHT; tick = 0; }
+      } break;
+
+    case S.HIGHLIGHT:
+      if (tick > 24) { state = S.DELETING; delN = 0; tick = 0; } break;
+
+    case S.DELETING:
+      delN = min(delN + 1, trig.length);
+      if (delN >= trig.length) {
+        if (ex.vars) { state = S.PANEL_IN;  panelA = 0;  tick = 0; }
+        else         { state = S.EXPANDING; exN = 0;     tick = 0; }
+      } break;
+
+    case S.PANEL_IN:
+      panelA = min(panelA + 18, 255);
+      if (panelA >= 255) {
+        state = S.FILL_VAR; varIdx = 0; varCharN = 0; nextVarTypeAt = tick + 18;
+      } break;
+
+    case S.FILL_VAR:
+      if (tick >= nextVarTypeAt) {
+        let cv = ex.vars[varIdx];
+        varCharN++;
+        nextVarTypeAt = tick + floor(random(5, 12));
+        if (varCharN >= cv.value.length) {
+          if (varIdx < ex.vars.length - 1) { varIdx++; varCharN = 0; nextVarTypeAt = tick + 22; }
+          else { state = S.PANEL_CLICK; tick = 0; }
+        }
+      } break;
+
+    case S.PANEL_CLICK:
+      if (tick > 20) { state = S.PANEL_OUT; tick = 0; } break;
+
+    case S.PANEL_OUT:
+      panelA = max(panelA - 22, 0);
+      if (panelA <= 0) { state = S.EXPANDING; exN = 0; tick = 0; } break;
+
+    case S.EXPANDING:
+      exN = min(exN + 3, exp.length);
+      if (exN >= exp.length) { state = S.HOLD; tick = 0; } break;
+
+    case S.HOLD:
+      const holdLimit = exIdx === EXAMPLES.length - 1 ? 250 : 130;
+      if (tick > holdLimit) { state = S.FADEOUT; fadeA = 0; tick = 0; } break;
+
+    case S.FADEOUT:
+      fadeA = min(fadeA + 14, 255);
+      if (fadeA >= 255) {
+        cycle++;
+        const typexpIdx = EXAMPLES.length - 1;
+        if (cycle % 3 === 0) {
+          exIdx = typexpIdx;
+        } else {
+          let next;
+          do { next = floor(random(EXAMPLES.length - 1)); } while (next === exIdx);
+          exIdx = next;
+        }
+        isDark = !isDark;
+        resetExample();
+      } break;
+  }
+}
+</script>
+</body>
+</html>
