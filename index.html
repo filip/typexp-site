@@ -1174,8 +1174,6 @@
     el.addEventListener('touchstart', e => {
       if (!touchActive) {
         touchActive = true;
-        el.style.outline = '2px solid var(--accent)';
-        el.style.outlineOffset = '3px';
         return;
       }
       const t = e.touches[0];
@@ -1196,7 +1194,6 @@
     document.addEventListener('touchstart', e => {
       if (touchActive && !el.contains(e.target)) {
         touchActive = false;
-        el.style.outline = 'none';
       }
     }, { passive: true });
   }
