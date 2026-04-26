@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=0.85, maximum-scale=0.85">
 <meta name="theme-color" content="#f5f5f7" id="themeColorMeta">
+<meta name="color-scheme" content="light dark">
 <script>
   if (window.matchMedia('(prefers-color-scheme: dark)').matches)
     document.getElementById('themeColorMeta').setAttribute('content', '#000000');
@@ -25,6 +26,7 @@
 <meta name="twitter:image" content="http://typexp.app/images/Typexp_og.jpg">
 <style>
   :root {
+    color-scheme: light;
     --bg: #f5f5f7;
     --surface: rgba(255,255,255,0.72);
     --surface-border: rgba(0,0,0,0.08);
@@ -53,6 +55,7 @@
   }
 
   [data-theme="dark"] {
+    color-scheme: dark;
     --bg: #000000;
     --surface: rgba(28,28,30,0.72);
     --surface-border: rgba(255,255,255,0.08);
