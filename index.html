@@ -283,6 +283,25 @@
     width: auto;
   }
 
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--text-primary);
+    color: var(--bg);
+    border-radius: 980px;
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s, opacity 0.2s;
+    letter-spacing: -0.01em;
+  }
+
+  .download-btn:hover { transform: scale(1.04); opacity: 0.88; }
+
+  .download-btn svg { flex-shrink: 0; }
+
   .hero-note {
     margin-top: 14px;
     font-size: 12px;
@@ -729,6 +748,23 @@
     line-height: 1.3;
   }
 
+  .mac-dropdown-sub-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mac-dropdown-vars {
+    font-size: 10px;
+    font-weight: 600;
+    font-family: -apple-system, sans-serif;
+    color: #f07d00;
+    background: rgba(240, 125, 0, 0.12);
+    padding: 1px 5px;
+    border-radius: 20px;
+    line-height: 1.5;
+  }
+
   .mac-dropdown-shortcut {
     font-size: 12px;
     color: var(--mac-menu-sub);
@@ -849,11 +885,14 @@
       Typexp lives in your menu bar and expands short abbreviations into full text — instantly, in any app.
     </p>
     <div class="hero-actions fade-up fade-up-4">
-      <a href="#" class="badge-link" id="heroAppStoreBadge">
-        <img src="images/appstore-badge-black.svg" alt="Download on the App Store" id="badgeImg">
+      <a href="https://github.com/filip/typexp-site/releases/latest/download/Typexp.zip" class="download-btn" id="heroDownloadBtn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2v10m0 0l-3-3m3 3l3-3M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Download for Mac
       </a>
     </div>
-    <p class="hero-note fade-up fade-up-5">$4.99 · One-time purchase · No subscription</p>
+    <p class="hero-note fade-up fade-up-5">£5.99 · One-time purchase · No subscription</p>
     <p class="hero-note fade-up fade-up-5" style="margin-top:4px;">Requires macOS 14 Sonoma or later</p>
   </div>
   <div class="hero-screenshot fade-up fade-up-5" style="position:relative;">
@@ -921,8 +960,11 @@
           <div class="mac-dropdown" id="typexpMenu">
             <div class="mac-dropdown-item">
               <div class="mac-dropdown-item-left">
-                <span class="mac-dropdown-title">Poject Enquiry</span>
-                <span class="mac-dropdown-sub">projectreply</span>
+                <span class="mac-dropdown-title">Project Enquiry</span>
+                <div class="mac-dropdown-sub-row">
+                  <span class="mac-dropdown-sub">projectreply</span>
+                  <span class="mac-dropdown-vars">2 vars</span>
+                </div>
               </div>
             </div>
             <div class="mac-dropdown-item">
@@ -934,7 +976,10 @@
             <div class="mac-dropdown-item">
               <div class="mac-dropdown-item-left">
                 <span class="mac-dropdown-title">Failed Registration</span>
-                <span class="mac-dropdown-sub">failedreg</span>
+                <div class="mac-dropdown-sub-row">
+                  <span class="mac-dropdown-sub">failedreg</span>
+                  <span class="mac-dropdown-vars">1 var</span>
+                </div>
               </div>
             </div>
             <div class="mac-dropdown-item">
@@ -946,12 +991,19 @@
             <div class="mac-dropdown-item">
               <div class="mac-dropdown-item-left">
                 <span class="mac-dropdown-title">Advertising Enquiry</span>
-                <span class="mac-dropdown-sub">adreply</span>
+                <div class="mac-dropdown-sub-row">
+                  <span class="mac-dropdown-sub">adreply</span>
+                  <span class="mac-dropdown-vars">2 vars</span>
+                </div>
               </div>
             </div>
             <div class="mac-dropdown-separator"></div>
             <div class="mac-dropdown-item">
-              <div class="mac-dropdown-item-left">
+              <div class="mac-dropdown-item-left" style="flex-direction:row; align-items:center;">
+                <svg class="mac-dropdown-item-icon" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 10a2 2 0 100-4 2 2 0 000 4z" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.7"/>
+                  <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.7"/>
+                </svg>
                 <span class="mac-dropdown-title">Settings</span>
               </div>
             </div>
@@ -1062,7 +1114,7 @@
       <div class="step">
         <div class="step-number">01</div>
         <h3 class="step-title">Install &amp; permit</h3>
-        <p class="step-body">Download from the App Store and grant Accessibility permission in System Settings. Typexp will guide you through it.</p>
+        <p class="step-body">Download and open Typexp, then grant Accessibility permission in System Settings. Typexp will guide you through it.</p>
       </div>
       <div class="step">
         <div class="step-number">02</div>
@@ -1088,12 +1140,15 @@
   <div class="section-inner" style="display:flex; flex-direction:column; align-items:center;">
     <p class="section-eyebrow">Get Typexp</p>
     <h2 class="section-title" style="max-width:480px;">Your keyboard<br>just got smarter.</h2>
-    <p class="section-subtitle" style="margin-bottom:40px;">Available now on the Mac App Store.</p>
-    <a href="#" class="badge-link" id="ctaBadge">
-      <img src="images/appstore-badge-black.svg" alt="Download on the App Store" id="ctaBadgeImg" style="height:77px;">
+    <p class="section-subtitle" style="margin-bottom:40px;">Direct download · No App Store required.</p>
+    <a href="https://github.com/filip/typexp-site/releases/latest/download/Typexp.zip" class="download-btn" id="ctaDownloadBtn">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 2v10m0 0l-3-3m3 3l3-3M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Download for Mac
     </a>
-    <p style="margin-top:16px; font-size:15px; font-weight:500; color:var(--text-secondary);">$4.99 · One-time purchase · No subscription</p>
-    <p style="margin-top:8px; font-size:13px; color:var(--text-tertiary);">Requires macOS 14 Sonoma or later · Sandboxed</p>
+    <p style="margin-top:16px; font-size:15px; font-weight:500; color:var(--text-secondary);">£5.99 · One-time purchase · No subscription</p>
+    <p style="margin-top:8px; font-size:13px; color:var(--text-tertiary);">Requires macOS 14 Sonoma or later</p>
   </div>
 </section>
 
@@ -1120,11 +1175,6 @@
   const html = document.documentElement;
   const toggle = document.getElementById('themeToggle');
   const heroScreenshot = document.getElementById('heroScreenshot');
-  const badgeImg = document.getElementById('badgeImg');
-  const ctaBadgeImg = document.getElementById('ctaBadgeImg');
-
-  const darkBadge = 'images/appstore-badge-white.svg';
-  const lightBadge = 'images/appstore-badge-black.svg';
   const darkShot = 'images/screenshot-editor-dark.png';
   const lightShot = 'images/screenshot-editor-light.png';
   const variableOverlay = document.getElementById('variableOverlay');
@@ -1137,8 +1187,6 @@
   function applyTheme(dark) {
     html.setAttribute('data-theme', dark ? 'dark' : 'light');
     document.getElementById('themeColorMeta').setAttribute('content', dark ? '#000000' : '#f5f5f7');
-    badgeImg.src = lightBadge;
-    ctaBadgeImg.src = lightBadge;
     heroScreenshot.src = dark ? darkShot : lightShot;
     variableOverlay.src = dark ? darkOverlay : lightOverlay;
     variableOverlay.style.filter = dark
@@ -1226,11 +1274,11 @@
   makeDraggable(document.getElementById('heroScreenshot'));
   makeDraggable(document.getElementById('variableOverlay'));
 
-  // Matomo App Store click tracking
-  ['heroAppStoreBadge', 'ctaBadge'].forEach(id => {
+  // Matomo download click tracking
+  ['heroDownloadBtn', 'ctaDownloadBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', () => {
-      _paq.push(['trackEvent', 'AppStore', 'Click', id]);
+      _paq.push(['trackEvent', 'Download', 'Click', id]);
     });
   });
 
