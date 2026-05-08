@@ -210,6 +210,7 @@
     padding: 72px 32px 12px;
     position: relative;
     overflow: hidden;
+    border-top: none;
   }
 
   .hero-content {
@@ -218,8 +219,21 @@
     max-width: 1080px;
   }
 
-.hero-title {
-    font-size: 15px;
+.hero-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: currentColor;
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-start infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .hero-title {
+    font-size: 30px;
     font-weight: 600;
     letter-spacing: 0;
     line-height: 1.4;
@@ -299,6 +313,7 @@
   section {
     padding: 40px 32px;
     transition: background 0.4s;
+    border-top: 1px solid var(--surface-border);
   }
 
   section.alt { background: var(--section-alt); }
@@ -543,7 +558,7 @@
     padding: 0 12px 0 16px;
     border-radius: 10px;
     background: var(--menubar-bg);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 24px rgba(0,0,0,0.18);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
     border: 1px solid var(--menubar-border);
     user-select: none;
   }
@@ -873,7 +888,7 @@
     max-width: 520px;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.13);
+    border: 1px solid rgba(0,0,0,0.1);
   }
   #banner-container canvas { display: block; }
 </style>
@@ -914,7 +929,7 @@
 <!-- HERO -->
 <section class="hero" id="hero">
   <div class="hero-content">
-    <h1 class="hero-title fade-up fade-up-1">Write it once.<br>Use it everywhere.</h1>
+    <h1 class="hero-title fade-up fade-up-1">Write it once.<br>Use it everywhere.<span class="hero-cursor"></span></h1>
     <p class="hero-subtitle fade-up fade-up-3">
       Typexp lives in your menu bar, turning short triggers into full text — with smart fill-in variables for templates that adapt every time, in any app.
     </p>
@@ -1316,7 +1331,7 @@
 
   makeDraggable(document.getElementById('heroScreenshot'), 0, 80);
   makeDraggable(document.getElementById('variableOverlay'), 0, 80);
-  makeDraggable(document.getElementById('syncScreenshot'), 0, 80);
+  makeDraggable(document.getElementById('syncScreenshot'), 0, 0);
 
   // Purchase modal
   const CHECKOUT_URL = 'https://ca-n.lemonsqueezy.com/checkout/buy/d1e316f7-4bdb-4f48-9320-4d6502870d2f?embed=1&media=0&logo=0';
@@ -1484,10 +1499,7 @@
       let pH = 100 + vars.length * rowH + 104;
       let pX = W/2 - pW/2, pY = H/2 - pH/2 + 30;
       p.drawingContext.globalAlpha = panelA / 255;
-      p.drawingContext.shadowColor = isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.18)';
-      p.drawingContext.shadowBlur = 56; p.drawingContext.shadowOffsetY = 16;
       p.fill(pal.panelBg); p.stroke(pal.panelBorder); p.strokeWeight(1); p.rect(pX, pY, pW, pH, 26); p.noStroke();
-      p.drawingContext.shadowBlur = 0; p.drawingContext.shadowOffsetY = 0;
       p.textFont('monospace'); p.textSize(22); p.textAlign(p.LEFT, p.TOP); p.fill(pal.label);
       p.text('FILL IN VARIABLES', pX+36, pY+34);
       vars.forEach((v, i) => {
