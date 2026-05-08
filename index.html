@@ -830,6 +830,85 @@
 
   }
 
+  /* ── NAV BUY BUTTON ── */
+  .nav-buy-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 16px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 980px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s, transform 0.2s;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  .nav-buy-btn:hover { opacity: 0.88; transform: scale(1.04); }
+
+  /* ── PURCHASE MODAL ── */
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.94) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .purchase-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: transparent;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  .purchase-backdrop.open { display: flex; }
+
+  .purchase-modal {
+    position: relative;
+    width: min(460px, 95vw);
+    height: min(700px, 90vh);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2);
+    background: #fff;
+    animation: modalIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .purchase-modal iframe {
+    width: 100%;
+    height: calc(100% + 80px);
+    margin-top: -80px;
+    border: none;
+    display: block;
+  }
+
+  .purchase-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.18);
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .purchase-close:hover { background: rgba(0,0,0,0.32); }
+
+
   /* ── BANNER ANIMATION ── */
   .banner-section { text-align: center; }
   #banner-container {
@@ -866,7 +945,8 @@
   </a>
   <div class="nav-right">
     <a href="#features" class="nav-link">Features</a>
-<a href="#how-it-works" class="nav-link">How it works</a>
+    <a href="#how-it-works" class="nav-link">How it works</a>
+    <button class="nav-buy-btn" id="navBuyBtn" onclick="openPurchaseModal()">Buy — £5.99</button>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
       <span class="theme-toggle-icon icon-sun">☀️</span>
       <span class="theme-toggle-icon icon-moon">🌙</span>
@@ -1171,6 +1251,14 @@
   </div>
 </footer>
 
+<!-- PURCHASE MODAL -->
+<div class="purchase-backdrop" id="purchaseBackdrop" onclick="handleBackdropClick(event)">
+  <div class="purchase-modal">
+    <button class="purchase-close" onclick="closePurchaseModal()" aria-label="Close">✕</button>
+    <iframe id="purchaseFrame" src="" title="Purchase Typexp" allow="payment"></iframe>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 <script>
   const html = document.documentElement;
@@ -1274,6 +1362,42 @@
 
   makeDraggable(document.getElementById('heroScreenshot'));
   makeDraggable(document.getElementById('variableOverlay'));
+
+  // Purchase modal
+  const CHECKOUT_URL = 'https://ca-n.lemonsqueezy.com/checkout/buy/d1e316f7-4bdb-4f48-9320-4d6502870d2f?embed=1&media=0&logo=0';
+
+  function openPurchaseModal() {
+    const frame = document.getElementById('purchaseFrame');
+    if (!frame.src || frame.src === window.location.href) frame.src = CHECKOUT_URL;
+    document.getElementById('purchaseBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    _paq.push(['trackEvent', 'Purchase', 'OpenModal']);
+  }
+
+  function closePurchaseModal() {
+    document.getElementById('purchaseBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function handleBackdropClick(e) {
+    if (e.target === document.getElementById('purchaseBackdrop')) closePurchaseModal();
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePurchaseModal(); });
+
+  window.addEventListener('message', e => {
+    if (e.origin.includes('lemonsqueezy.com')) {
+      try {
+        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+        if (data?.event === 'Checkout.Close' || data?.event === 'Checkout.Success') closePurchaseModal();
+      } catch {}
+    }
+  });
+
+  // Auto-open checkout when linked from in-app Buy button (?purchase)
+  if (new URLSearchParams(window.location.search).has('purchase')) {
+    window.addEventListener('load', () => setTimeout(openPurchaseModal, 600));
+  }
 
   // Matomo download click tracking
   ['heroDownloadBtn', 'ctaDownloadBtn'].forEach(id => {
