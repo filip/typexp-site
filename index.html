@@ -207,7 +207,7 @@
     align-items: flex-start;
     justify-content: center;
     text-align: left;
-    padding: 140px 32px 80px;
+    padding: 72px 32px 12px;
     position: relative;
     overflow: hidden;
   }
@@ -219,20 +219,20 @@
   }
 
 .hero-title {
-    font-size: clamp(36px, 6vw, 64px);
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    line-height: 1.0;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.4;
     color: var(--hero-text);
     margin-bottom: 20px;
   }
 
   .hero-subtitle {
-    font-size: clamp(18px, 2.5vw, 22px);
+    font-size: 14px;
     font-weight: 400;
     color: var(--hero-sub);
-    letter-spacing: -0.3px;
-    line-height: 1.5;
+    letter-spacing: 0;
+    line-height: 1.6;
     margin: 0 0 40px;
   }
 
@@ -285,7 +285,7 @@
   .hero-screenshot {
     position: relative;
     z-index: 1;
-    margin-top: 64px;
+    margin-top: 16px;
     max-width: 860px;
     width: 100%;
   }
@@ -297,7 +297,7 @@
 
   /* ── SECTIONS ── */
   section {
-    padding: 100px 32px;
+    padding: 40px 32px;
     transition: background 0.4s;
   }
 
@@ -317,19 +317,19 @@
   }
 
   .section-title {
-    font-size: clamp(26px, 3.5vw, 40px);
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    line-height: 1.05;
-    color: var(--text-primary);
-    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.65;
+    color: var(--hero-text);
+    margin-bottom: 10px;
   }
 
   .section-subtitle {
-    font-size: 18px;
+    font-size: 14px;
     color: var(--text-secondary);
-    line-height: 1.6;
-    letter-spacing: -0.2px;
+    line-height: 1.7;
+    letter-spacing: 0;
   }
 
   /* ── FEATURES GRID ── */
@@ -424,15 +424,15 @@
   }
 
   .step-title {
-    font-size: 19px;
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: -0.4px;
+    letter-spacing: 0;
     color: var(--text-primary);
     margin-bottom: 8px;
   }
 
   .step-body {
-    font-size: 15px;
+    font-size: 14px;
     color: var(--text-secondary);
     line-height: 1.65;
   }
@@ -517,14 +517,13 @@
   .footer-badge .badge-link img { height: 77px; }
 
   /* ── MENUBAR DEMO ── */
-  .demo-section,
   .mac-menubar,
   .mac-dropdown {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
   }
   .demo-section {
     background: var(--section-alt);
-    padding: 80px 32px 100px;
+    padding: 40px 32px;
   }
 
   .mac-desktop {
@@ -867,10 +866,10 @@
 
 
   /* ── BANNER ANIMATION ── */
-  .banner-section { text-align: left; }
+  .banner-section { text-align: left; padding-top: 16px; }
   #banner-container {
     width: min(520px, 100%);
-    margin: 48px 0 0;
+    margin: 24px 0 0;
     max-width: 520px;
     border-radius: 20px;
     overflow: hidden;
@@ -1131,7 +1130,7 @@
     <p class="section-eyebrow">Backup &amp; Sync</p>
     <h2 class="section-title">Your snippets,<br>everywhere.</h2>
     <p class="section-subtitle" style="margin: 0 0 48px;">Enable iCloud Drive sync and your snippets appear on every Mac you own. Automatic weekly backups keep a rolling history so you can always recover.</p>
-    <div class="shot">
+    <div class="shot" style="max-width: 70%;">
       <img id="syncScreenshot" src="images/screenshot-sync-light.png" alt="Typexp — iCloud sync and backups settings">
     </div>
   </div>
@@ -1196,7 +1195,6 @@
         Typexp
       </div>
       <div class="footer-meta" style="margin-top:10px;">© 2026 Creative Applications Network</div>
-      <div class="footer-meta" style="margin-top:4px;">Wallpaper by Sean Fahrenbruch</div>
     </div>
     <div style="display:flex; gap:24px; align-items:center;">
       <a href="/changelog" style="font-size:13px; color:var(--text-tertiary); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-tertiary)'">Release History</a>
@@ -1316,10 +1314,9 @@
     }, { passive: true });
   }
 
-  const offsetX = window.innerWidth < 768 ? 0 : -50;
-  makeDraggable(document.getElementById('heroScreenshot'), offsetX, 0);
-  makeDraggable(document.getElementById('variableOverlay'), offsetX, 0);
-  makeDraggable(document.getElementById('syncScreenshot'), offsetX, 0);
+  makeDraggable(document.getElementById('heroScreenshot'), 0, 0);
+  makeDraggable(document.getElementById('variableOverlay'), 0, 0);
+  makeDraggable(document.getElementById('syncScreenshot'), 0, 0);
 
   // Purchase modal
   const CHECKOUT_URL = 'https://ca-n.lemonsqueezy.com/checkout/buy/d1e316f7-4bdb-4f48-9320-4d6502870d2f?embed=1&media=0&logo=0';
