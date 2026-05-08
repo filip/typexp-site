@@ -149,6 +149,10 @@
 
   .nav-link:hover { color: var(--text-primary); }
 
+  @media (max-width: 767px) {
+    .nav-link { display: none; }
+  }
+
   /* Theme toggle */
   .theme-toggle {
     position: relative;
@@ -1312,9 +1316,10 @@
     }, { passive: true });
   }
 
-  makeDraggable(document.getElementById('heroScreenshot'), -50, 0);
-  makeDraggable(document.getElementById('variableOverlay'), -50, 0);
-  makeDraggable(document.getElementById('syncScreenshot'), -50, 0);
+  const offsetX = window.innerWidth < 768 ? 0 : -50;
+  makeDraggable(document.getElementById('heroScreenshot'), offsetX, 0);
+  makeDraggable(document.getElementById('variableOverlay'), offsetX, 0);
+  makeDraggable(document.getElementById('syncScreenshot'), offsetX, 0);
 
   // Purchase modal
   const CHECKOUT_URL = 'https://ca-n.lemonsqueezy.com/checkout/buy/d1e316f7-4bdb-4f48-9320-4d6502870d2f?embed=1&media=0&logo=0';
